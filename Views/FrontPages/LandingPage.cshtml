@@ -1,0 +1,53 @@
+@{
+  Layout = "_FrontLayout";
+  ViewData["Title"] = "Landing Page - Front Pages";
+}
+
+@section VendorStyles {
+  <link rel="stylesheet" href="~/vendor/libs/nouislider/nouislider.css" />
+  <link rel="stylesheet" href="~/vendor/libs/swiper/swiper.css" />
+}
+@section PageStyles {
+  <link rel="stylesheet" href="~/vendor/css/pages/front-page-landing.css" />
+}
+@section VendorScripts {
+  <script src="~/vendor/libs/nouislider/nouislider.js"></script>
+  <script src="~/vendor/libs/swiper/swiper.js"></script>
+}
+@section PageScripts {
+  <script src="~/js/front-page-landing.js"></script>
+}
+
+@* ************** Content ************** *@
+<div data-bs-spy="scroll" class="scrollspy-example">
+  <!-- Hero: Start -->
+  <section id="landingHero" class="section-py landing-hero position-relative">
+    <img src="~/img/front-pages/backgrounds/hero-bg-light.png" alt="hero background"
+         class="position-absolute top-0 start-0 w-100 h-100 z-n1" data-speed="1"
+         data-app-light-img="front-pages/backgrounds/hero-bg-light.png"
+         data-app-dark-img="front-pages/backgrounds/hero-bg-dark.png" />
+    <div class="container">
+      <div class="hero-text-box text-center">
+        <h2 class="text-primary hero-title mb-4">Need help finding a respondent?</h2>
+        <h2 class="h6 mb-8 lh-md">Get 30 free responses with your first registration!<br />Adjust according to your
+          preferences to achieve the desired result!</h2>
+          <div class="col-md">
+            <div class="card">
+              <div class="card-body">
+                <div class="input-group">
+                  <div class="form-floating form-floating-outline">
+                    <input type="text" class="form-control" id="floatingInput" placeholder="https://forms.gle works too"
+                           aria-describedby="floatingInputHelp" />
+                    <label for="floatingInput">https://docs.google.com/forms/</label>
+                  </div>
+                  <button type="button" class="btn btn-primary">Try!</button>
+                </div>
+                <div id="floatingInputHelp" class="form-text">We'll never share your details with anyone else.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Hero: End -->
+  </div>

@@ -1,0 +1,38 @@
+services:
+  web:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /Regen
+    ports:
+      - '5050:80'
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      DOTNET_USE_POLLING_FILE_WATCHER: 'true'
+      Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
+      Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
+    volumes:
+      - .:/Regen
+      - regen-nuget:/root/.nuget/packages
+      - regen-bin:/Regen/bin
+      - regen-obj:/Regen/obj
+      - regen-dotnet-home:/root/.dotnet
+      - regen-data:/Regen/data
+    command: dotnet watch run --non-interactive --no-launch-profile
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: examplepassword
+      POSTGRES_DB: exampledb
+    volumes:
+      - regen-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  regen-nuget:
+  regen-bin:
+  regen-obj:
+  regen-dotnet-home:
+  regen-postgres-data:
+  regen-data:
