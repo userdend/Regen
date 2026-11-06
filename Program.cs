@@ -10,7 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<RegenContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("RegenContext") ?? throw new InvalidOperationException("Connection string 'RegenContext' not found.")));
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("NoRedirect", c =>
+        c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0"))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        AllowAutoRedirect = false,
+        AutomaticDecompression = System.Net.DecompressionMethods.All
+    });
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Register services
