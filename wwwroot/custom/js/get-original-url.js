@@ -24,8 +24,16 @@ async function getOriginalUrl(input) {
     return sanitizeInput(url);
   } else {
     // Get the original link.
-    const params = new URLSearchParams({ url: url });
-    const response = await fetch(`${window.appUrls.getOriginalUrl}?${params}`);
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    const response = await fetch(window.appUrls.getOriginalUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        RequestVerificationToken: token
+      },
+      body: JSON.stringify({ url })
+    });
 
     // If error, return the initial URL.
     if (!response.ok) throw new Error(`Request failed with status ${response.status}`);

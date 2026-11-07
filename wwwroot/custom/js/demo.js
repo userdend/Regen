@@ -95,11 +95,19 @@ document.getElementById('btnTry')?.addEventListener('click', async () => {
   demoContent.innerHTML = "<div class='spinner-border' role='status'></div>";
 
   try {
-    const original_url = await getOriginalUrl(demoInput.value);
+    const url = await getOriginalUrl(demoInput.value);
 
     // Send request to API.
-    const params = new URLSearchParams({ form: original_url });
-    const response = await fetch(`${window.appUrls.getFormContent}?${params}`);
+    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+    const response = await fetch(window.appUrls.getFormContent, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        RequestVerificationToken: token
+      },
+      body: JSON.stringify({ url })
+    });
 
     // Check if the response is OK.
     if (!response.ok) {

@@ -68,6 +68,7 @@
                 <div class="card-body">
                   <div class="input-group">
                     <div class="form-floating form-floating-outline">
+                      @Html.AntiForgeryToken()
                       <input type="text" class="form-control" id="demoInput" placeholder="https://forms.gle works too!"
                              aria-describedby="demoInputHelp" />
                       <label for="demoInput">https://docs.google.com/forms/</label>
