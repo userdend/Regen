@@ -1,14 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Regen.Data;
-using Regen.Models;
 using Regen.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Connect to the database
 builder.Services.AddDbContext<RegenContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("RegenContext") ?? throw new InvalidOperationException("Connection string 'RegenContext' not found.")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("RegenContext") ?? throw new InvalidOperationException("Connection string 'RegenContext' not found.")));
 
 builder.Services.AddHttpClient("NoRedirect", c =>
         c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0"))
@@ -27,14 +25,6 @@ builder.Services.AddScoped<GoogleFormService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
-// Create a service scope to get an RegenContext instance using DI and seed the database.
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    SeedData.Initialize(services);
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

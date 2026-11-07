@@ -8,7 +8,8 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu">
 
   @* ! Hide app brand if navbar-full *@
-  <div class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
+  <div
+    class='app-brand demo @((@ViewData["navbarFull"] != null && Convert.ToBoolean(@ViewData["navbarFull"])) ? "d-xl-none" : "")'>
     <a asp-controller="Dashboards" asp-action="Index" class="app-brand-link gap-xl-0 gap-2">
       <span class="app-brand-logo demo me-1">
         @await Html.PartialAsync("../_Partials/_Macros")
@@ -150,13 +151,6 @@
           </a>
         </li>
       </ul>
-    </li>
-
-    <li class='menu-item@(currentPage.StartsWith("/Transactions") ? " active" : "")'>
-      <a asp-controller="Transactions" asp-action="Index" class="menu-link">
-        <i class="menu-icon icon-base ri ri-database-2-line"></i>
-        <div data-i18n="Transactions (CRUD)">Transactions (CRUD)</div>
-      </a>
     </li>
 
     <!-- Apps & Pages -->
