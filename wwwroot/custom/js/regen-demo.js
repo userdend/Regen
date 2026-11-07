@@ -36,12 +36,6 @@ const demoContent = document.getElementById('demoContent');
 const demoInput = document.getElementById('demoInput');
 
 function startDemo(data_samples) {
-  // Check if the input form is empty.
-  const viewform_input = demoInput.value;
-  if (viewform_input.trim() === '') {
-    return;
-  }
-
   const formContainerClone = formContainerTemplate.content.cloneNode(true);
 
   // Loop through the samples.
@@ -80,7 +74,7 @@ function startDemo(data_samples) {
 
 document.getElementById('btnTry')?.addEventListener('click', async () => {
   // Check if the input is empty.
-  if (demoInput.value.trim() === '' || !new URL(demoInput.value)) {
+  if (demoInput.value.trim() === '' || !URL.canParse(demoInput.value)) {
     Swal.fire({
       icon: 'warning',
       title: 'Warning!',

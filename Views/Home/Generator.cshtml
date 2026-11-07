@@ -1,0 +1,199 @@
+@{
+    ViewData["Title"] = "Generator";
+}
+
+@section VendorStyles {
+    <link rel="stylesheet" href="~/vendor/libs/bs-stepper/bs-stepper.css" />
+    <link rel="stylesheet" href="~/vendor/libs/bootstrap-select/bootstrap-select.css" />
+    <link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+    <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.css" />
+    <link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css" />
+    <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.css" />
+}
+
+@section VendorScripts {
+    <script src="~/vendor/libs/bs-stepper/bs-stepper.js"></script>
+    <script src="~/vendor/libs/bootstrap-select/bootstrap-select.js"></script>
+    <script src="~/vendor/libs/select2/select2.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/popular.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/bootstrap5.js"></script>
+    <script src="~/vendor/libs/&#64;form-validation/auto-focus.js"></script>
+    <script src="~/vendor/libs/sweetalert2/sweetalert2.js"></script>
+}
+
+@section PageScripts {
+    <script src="~/custom/js/regen-get-original-url.js" asp-append-version="true"></script>
+    <script src="~/custom/js/regen-generator.js" asp-append-version="true"></script>
+    <script src="~/js/form-wizard-validation.js"></script>
+}
+
+<template id="promptTemplate">
+    <div class="form-floating form-floating-outline">
+        <input type="text" id="first-name-modern-vertical" class="form-control" placeholder="Describe your request" />
+        <label for="first-name-modern-vertical">Prompt</label>
+    </div>
+</template>
+
+<template id="formContainerTemplate">
+    <div class="accordion" id="accordionFront">
+    </div>
+</template>
+
+<template id="questionCardTemplate">
+    <div class="accordion-item border">
+        <h2 class="accordion-header" id="head-One">
+            <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
+                    data-bs-target="#accordionOne" aria-expanded="true" aria-controls="accordionOne">Do you charge for each
+                upgrade?</button>
+            </h2>
+
+            <div id="accordionOne" class="accordion-collapse collapse" data-bs-parent="#accordionFront"
+                 aria-labelledby="accordionOne">
+                <div class="accordion-body">Lemon drops chocolate cake gummies carrot cake chupa chups muffin topping.
+                    Sesame
+                    snaps icing marzipan gummi bears macaroon dragée danish caramels powder. Bear claw dragée pastry topping
+                    soufflé. Wafer gummi bears marshmallow pastry pie.</div>
+                </div>
+            </div>
+        </template>
+
+        @* ************** Content ************** *@
+        <!-- Default -->
+        <div class="row">
+            <!-- Modern Vertical Wizard -->
+            <div class="col-12">
+                <div class="bs-stepper vertical wizard-modern wizard-modern-vertical mt-2">
+                    <div class="bs-stepper-header gap-lg-2">
+                        <div class="step" data-target="#google-form-url-section">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-number">01</span>
+                                    <span class="d-flex flex-column gap-1 ms-2">
+                                        <span class="bs-stepper-title">Google Form URL</span>
+                                        <span class="bs-stepper-subtitle">Setup</span>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" data-target="#google-form-details-section">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-number">02</span>
+                                    <span class="d-flex flex-column gap-1 ms-2">
+                                        <span class="bs-stepper-title">Google Form Details</span>
+                                        <span class="bs-stepper-subtitle">Configure</span>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="line"></div>
+                        <div class="step" data-target="#generate-settings-section">
+                            <button type="button" class="step-trigger">
+                                <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
+                                <span class="bs-stepper-label">
+                                    <span class="bs-stepper-number">03</span>
+                                    <span class="d-flex flex-column gap-1 ms-2">
+                                        <span class="bs-stepper-title">Generate</span>
+                                        <span class="bs-stepper-subtitle">Set</span>
+                                    </span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bs-stepper-content">
+                        <form onSubmit="return false">
+                            <!-- Google Form URL -->
+                            <div id="google-form-url-section" class="content">
+                                <div class="content-header mb-4">
+                                    <h6 class="mb-0">Google Form URL</h6>
+                                    <small>Enter Your Google Form URL.</small>
+                                </div>
+                                <div class="row g-6">
+                                    <div class="col-sm-12">
+                                        <div class="form-floating form-floating-outline">
+                                            <input type="text" id="googleFormUrl" class="form-control"
+                                                   placeholder="https://forms.gle works too!" />
+                                            <label for="googleFormUrl">https://docs.google.com/forms/</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-between">
+                                        <button class="btn btn-outline-secondary btn-prev" disabled>
+                                            <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
+                                            <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                                        </button>
+                                        <div><button class="btn btn-primary btn-next-manual"><span
+                                            class="align-middle d-sm-inline-block d-none me-sm-1">Generate
+                                            Manually</span>
+                                            <i class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                            <button class="btn btn-primary btn-next-ai"><span
+                                                class="align-middle d-sm-inline-block d-none me-sm-1">Generate with
+                                                AI</span> <i class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Google Form Details -->
+                                <div id="google-form-details-section" class="content">
+                                    <div class="content-header mb-4">
+                                        <h6 class="mb-0">Google Form Details</h6>
+                                        <small>Configure Your Google Form Details.</small>
+                                    </div>
+                                    <div class="row g-6">
+                                        <div class="col-sm-12">
+                                            <div id="templateContainer">
+                                                <small class="text-secondary">Not available.</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 d-flex justify-content-between">
+                                            <button class="btn btn-outline-secondary btn-prev">
+                                                <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
+                                                <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                                            </button>
+                                            <button class="btn btn-primary btn-next"><span
+                                                class="align-middle d-sm-inline-block d-none me-sm-1">Next</span> <i
+                                                class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Generate -->
+                                    <div id="generate-settings-section" class="content">
+                                        <div class="content-header mb-4">
+                                            <h6 class="mb-0">Generate</h6>
+                                            <small>Enter Your Generate Settings.</small>
+                                        </div>
+                                        <div class="row g-6">
+                                            <div class="col-sm-6">
+                                                <div class="form-floating form-floating-outline">
+                                                    <input type="number" value="0" id="googleFormRespondent" class="form-control" />
+                                                    <label for="googleFormRespondent">Respondent</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <select id="googleFormTimestamp" class="form-select">
+                                                    <option value="1">1 Second</option>
+                                                    <option value="2">15 Seconds</option>
+                                                    <option value="3">30 Seconds</option>
+                                                    <option value="3">45 Seconds</option>
+                                                    <option value="3">1 Minute</option>
+                                                    <option value="3">5 Minutes</option>
+                                                    <option value="3">10 Minutes</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 d-flex justify-content-between">
+                                                <button class="btn btn-outline-secondary btn-prev">
+                                                    <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
+                                                    <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                                                </button>
+                                                <button class="btn btn-primary btn-submit">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Modern Vertical Wizard -->
+                </div>

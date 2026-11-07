@@ -1,7 +1,7 @@
 @{
   TempData.Keep();
 
-  string? currentPage =  ViewContext.HttpContext.Request.Path;
+  string? currentPage = ViewContext.HttpContext.Request.Path;
 
   ViewData["containerNav"] ??= "container-fluid";
 }
@@ -12,6 +12,12 @@
     @* ! Full version menu-items *@
     <ul class="menu-inner">
 
+      <li class='menu-item@(currentPage == "/Home/Generator" ? " active" : "")'>
+        <a asp-controller="Home" asp-action="Generator" class="menu-link">
+          <i class="menu-icon icon-base ri ri-computer-line"></i>
+          <div data-i18n="Generator">Generator</div>
+        </a>
+      </li>
       <!-- Dashboards -->
       <li class='menu-item@(currentPage.EndsWith("/") ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -95,7 +101,8 @@
       </li>
 
       <!-- Apps -->
-      <li class='menu-item@((currentPage.StartsWith("/Apps") || currentPage.StartsWith("/Access") || currentPage.StartsWith("/Users") || currentPage.StartsWith("/Ecommerce") || currentPage.StartsWith("/Academy") || currentPage.StartsWith("/Logistics") || currentPage.StartsWith("/Invoice") || currentPage.StartsWith("/Transactions")) ? " active" : "")'>
+      <li
+        class='menu-item@((currentPage.StartsWith("/Apps") || currentPage.StartsWith("/Access") || currentPage.StartsWith("/Users") || currentPage.StartsWith("/Ecommerce") || currentPage.StartsWith("/Academy") || currentPage.StartsWith("/Logistics") || currentPage.StartsWith("/Invoice") || currentPage.StartsWith("/Transactions")) ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
           <i class="menu-icon icon-base ri ri-mail-open-line"></i>
           <div data-i18n="Apps">Apps</div>
@@ -406,7 +413,8 @@
       </li>
 
       <!-- Pages -->
-      <li class='menu-item@((currentPage.StartsWith("/Pages") || currentPage.StartsWith("/Wizards") || currentPage.StartsWith("/Auth") || currentPage.StartsWith("/Modals")) ? " active" : "")'>
+      <li
+        class='menu-item@((currentPage.StartsWith("/Pages") || currentPage.StartsWith("/Wizards") || currentPage.StartsWith("/Auth") || currentPage.StartsWith("/Modals")) ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
           <i class="menu-icon icon-base ri ri-article-line"></i>
           <div data-i18n="Pages">Pages</div>
@@ -702,7 +710,8 @@
       </li>
 
       <!-- Components -->
-      <li class='menu-item@((currentPage.StartsWith("/Cards") || currentPage.StartsWith("/Ui") || currentPage.StartsWith("/ExtendedUi") || currentPage.StartsWith("/Icons")) ? " active" : "")'>
+      <li
+        class='menu-item@((currentPage.StartsWith("/Cards") || currentPage.StartsWith("/Ui") || currentPage.StartsWith("/ExtendedUi") || currentPage.StartsWith("/Icons")) ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
           <i class="menu-icon icon-base ri ri-archive-line"></i>
           <div data-i18n="Components">Components</div>
@@ -943,7 +952,8 @@
       </li>
 
       <!-- Forms -->
-      <li class='menu-item@((currentPage.StartsWith("/Forms") || currentPage.StartsWith("/FormLayouts") || currentPage.StartsWith("/FormWizard") || currentPage.StartsWith("/FormValidation")) ? " active" : "")'>
+      <li
+        class='menu-item@((currentPage.StartsWith("/Forms") || currentPage.StartsWith("/FormLayouts") || currentPage.StartsWith("/FormWizard") || currentPage.StartsWith("/FormValidation")) ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
           <i class="menu-icon icon-base ri ri-pages-line"></i>
           <div data-i18n="Forms">Forms</div>
