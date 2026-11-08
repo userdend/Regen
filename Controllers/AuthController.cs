@@ -11,7 +11,15 @@ namespace Regen.Controllers;
 
 public class AuthController : Controller
 {
-  public IActionResult Login() => View();
+  public IActionResult Login()
+  {
+    if (User.Identity?.IsAuthenticated == true)
+    {
+      return RedirectToAction("Generator", "Home");
+    }
+
+    return View();
+  }
 
   [HttpPost]
   [ValidateAntiForgeryToken]
