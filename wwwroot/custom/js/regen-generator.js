@@ -84,6 +84,7 @@ $(function () {
             wizardModernVerticalBtnManualNext.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
 
             const url = await getOriginalUrl(googleFormUrlInput.value);
+            localStorage.setItem('originalURL', url);
             const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
             const response = await fetch(window.appUrls.getFormContent, {
               method: 'POST',
@@ -121,6 +122,28 @@ $(function () {
       });
     }
 
+    if (wizardModernVerticalBtnNextAiList) {
+      wizardModernVerticalBtnNextAiList.forEach(wizardModernVerticalBtnAiNext => {
+        wizardModernVerticalBtnAiNext.addEventListener('click', async event => {
+          if (onProcessing) {
+            return;
+          }
+          modernVerticalStepper.next();
+        });
+      });
+    }
+
+    if (wizardModernVerticalBtnNextList) {
+      wizardModernVerticalBtnNextList.forEach(wizardModernVerticalBtnNext => {
+        wizardModernVerticalBtnNext.addEventListener('click', async event => {
+          if (onProcessing) {
+            return;
+          }
+          modernVerticalStepper.next();
+        });
+      });
+    }
+
     if (wizardModernVerticalBtnPrevList) {
       wizardModernVerticalBtnPrevList.forEach(wizardModernVerticalBtnPrev => {
         wizardModernVerticalBtnPrev.addEventListener('click', event => {
@@ -130,7 +153,8 @@ $(function () {
     }
 
     if (wizardModernVerticalBtnSubmit) {
-      wizardModernVerticalBtnSubmit.addEventListener('click', event => {
+      wizardModernVerticalBtnSubmit.addEventListener('click', async event => {
+        await configQuestion();
         Swal.fire({
           icon: 'success',
           title: 'Form Retrieved Successfully!',

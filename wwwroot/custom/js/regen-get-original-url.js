@@ -38,9 +38,9 @@ async function getOriginalUrl(input) {
     // If error, return the initial URL.
     if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
 
-    const original_url = await response.text();
+    const originalUrl = await response.text();
 
     // Return the URL.
-    return sanitizeInput(original_url);
+    return sanitizeInput(originalUrl);
   }
 }

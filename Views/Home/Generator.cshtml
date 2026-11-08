@@ -31,6 +31,8 @@
         };
     </script>
     <script src="~/js/forms-sliders.js"></script>
+    <script src="~/custom/js/regen-store.js" asp-append-version="true"></script>
+    <script src="~/custom/js/regen-submit-google-form-details.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-build-google-form-details.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-get-original-url.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-generator.js" asp-append-version="true"></script>
@@ -200,13 +202,13 @@
                                             </div>
                                             <div class="col-sm-6">
                                                 <select id="google-form-timestamp" class="form-select">
-                                                    <option value="1">1 Second</option>
-                                                    <option value="2">15 Seconds</option>
-                                                    <option value="3">30 Seconds</option>
-                                                    <option value="3">45 Seconds</option>
-                                                    <option value="3">1 Minute</option>
-                                                    <option value="3">5 Minutes</option>
-                                                    <option value="3">10 Minutes</option>
+                                                    <option value="1000" selected>1 Second</option>
+                                                    <option value="15000">15 Seconds</option>
+                                                    <option value="30000">30 Seconds</option>
+                                                    <option value="45000">45 Seconds</option>
+                                                    <option value="60000">1 Minute</option>
+                                                    <option value="300000">5 Minutes</option>
+                                                    <option value="600000">10 Minutes</option>
                                                 </select>
                                             </div>
                                             <div class="col-12 d-flex justify-content-between">

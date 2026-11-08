@@ -1,5 +1,3 @@
-const entryMapping = new Map();
-
 // Map a question to its corresponding function.
 const questionMap = {
   0: paragraph,
