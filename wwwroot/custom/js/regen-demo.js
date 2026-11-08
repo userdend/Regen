@@ -30,10 +30,10 @@ const question_forbidden = {
   12: null
 };
 
-const formContainerTemplate = document.getElementById('formContainerTemplate');
-const questionCardTemplate = document.getElementById('questionCardTemplate');
-const demoContent = document.getElementById('demoContent');
-const demoInput = document.getElementById('demoInput');
+const formContainerTemplate = document.getElementById('form-container-template');
+const questionCardTemplate = document.getElementById('question-card-template');
+const demoContent = document.getElementById('demo-content');
+const demoInput = document.getElementById('demo-input');
 
 function startDemo(data_samples) {
   const formContainerClone = formContainerTemplate.content.cloneNode(true);
@@ -72,7 +72,7 @@ function startDemo(data_samples) {
   demoContent.appendChild(formContainerClone);
 }
 
-document.getElementById('btnTry')?.addEventListener('click', async () => {
+document.getElementById('btn-try')?.addEventListener('click', async () => {
   // Check if the input is empty.
   if (demoInput.value.trim() === '' || !URL.canParse(demoInput.value)) {
     Swal.fire({
