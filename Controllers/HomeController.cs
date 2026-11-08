@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Regen.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Regen.Controllers;
 
@@ -13,6 +15,7 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    [Authorize]
     public IActionResult Generator()
     {
         return View();
