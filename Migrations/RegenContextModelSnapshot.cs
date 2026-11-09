@@ -22,6 +22,66 @@ namespace Regen.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Regen.Models.ScheduledBatch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("IntervalMilliseconds")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ScheduledBatches");
+                });
+
+            modelBuilder.Entity("Regen.Models.ScheduledEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BatchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastError")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BatchId");
+
+                    b.HasIndex("Status", "ScheduledAt");
+
+                    b.ToTable("ScheduledEntries");
+                });
+
             modelBuilder.Entity("Regen.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -67,6 +127,38 @@ namespace Regen.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Regen.Models.ScheduledBatch", b =>
+                {
+                    b.HasOne("Regen.Models.User", "User")
+                        .WithMany("ScheduledBatches")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Regen.Models.ScheduledEntry", b =>
+                {
+                    b.HasOne("Regen.Models.ScheduledBatch", "Batch")
+                        .WithMany("Entries")
+                        .HasForeignKey("BatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Batch");
+                });
+
+            modelBuilder.Entity("Regen.Models.ScheduledBatch", b =>
+                {
+                    b.Navigation("Entries");
+                });
+
+            modelBuilder.Entity("Regen.Models.User", b =>
+                {
+                    b.Navigation("ScheduledBatches");
                 });
 #pragma warning restore 612, 618
         }

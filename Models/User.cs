@@ -13,6 +13,7 @@ public class User
     public string? AvatarUrl { get; set; }
 
     public string? StripeCustomerId { get; set; }
+    public List<ScheduledBatch> ScheduledBatches { get; set; } = new();
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

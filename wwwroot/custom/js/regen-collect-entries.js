@@ -308,7 +308,7 @@ function prefillFoot() {
   return config;
 }
 
-async function configQuestion() {
+async function collectEntries() {
   const googleFormRespondent = document.getElementById('google-form-respondent');
   const googleFormTimestamp = document.getElementById('google-form-timestamp');
 
@@ -326,5 +326,5 @@ async function configQuestion() {
     entries: entryCollection
   };
 
-  console.log(payload);
+  return payload;
 }

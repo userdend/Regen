@@ -27,13 +27,14 @@
     <script>
         window.appUrls = {
             getOriginalUrl: "@Url.Action("GetGoogleFormOriginalUrl", "GoogleForm")",
-            getFormContent: "@Url.Action("GetGoogleFormContent", "GoogleForm")"
+            getFormContent: "@Url.Action("GetGoogleFormContent", "GoogleForm")",
+            createFormSubmission: "@Url.Action("CreateGoogleSubmission", "GoogleForm")"
         };
     </script>
     <script src="~/js/forms-sliders.js"></script>
     <script src="~/custom/js/regen-store.js" asp-append-version="true"></script>
-    <script src="~/custom/js/regen-submit-google-form-details.js" asp-append-version="true"></script>
-    <script src="~/custom/js/regen-build-google-form-details.js" asp-append-version="true"></script>
+    <script src="~/custom/js/regen-collect-entries.js" asp-append-version="true"></script>
+    <script src="~/custom/js/regen-build-form.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-get-original-url.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-generator.js" asp-append-version="true"></script>
     <script src="~/js/form-wizard-validation.js"></script>
@@ -133,6 +134,7 @@
                     </div>
                     <div class="bs-stepper-content">
                         <form onSubmit="return false">
+                            @Html.AntiForgeryToken()
                             <!-- Google Form URL -->
                             <div id="google-form-url-section" class="content">
                                 <div class="content-header mb-4">
@@ -142,7 +144,6 @@
                                 <div class="row g-6">
                                     <div class="col-sm-12">
                                         <div class="form-floating form-floating-outline">
-                                            @Html.AntiForgeryToken()
                                             <input type="text" id="google-form-url" class="form-control"
                                                    placeholder="https://forms.gle works too!" />
                                             <label for="google-form-url">https://docs.google.com/forms/</label>

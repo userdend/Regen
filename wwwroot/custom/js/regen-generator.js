@@ -154,14 +154,51 @@ $(function () {
 
     if (wizardModernVerticalBtnSubmit) {
       wizardModernVerticalBtnSubmit.addEventListener('click', async event => {
-        await configQuestion();
-        Swal.fire({
-          icon: 'success',
-          title: 'Form Retrieved Successfully!',
-          text: 'Your Google Form has been retrieved and is ready for processing.',
-          confirmButtonText: 'Continue',
-          confirmButtonColor: '#ff9800'
-        });
+        const submitButton = event.currentTarget;
+
+        try {
+          submitButton.disabled = true;
+          submitButton.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
+
+          const data = await collectEntries();
+          const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+          const request = await fetch(window.appUrls.createFormSubmission, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              RequestVerificationToken: token
+            },
+            body: JSON.stringify(data)
+          });
+
+          // Check if the response is OK.
+          if (!request.ok) {
+            throw new Error(`Network request is not ok: ${request.statusText}`);
+          }
+
+          // Parse the response JSON.
+          const response = await request.json();
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Form Retrieved Successfully!',
+            text: 'Your Google Form has been retrieved and is ready for processing.',
+            confirmButtonText: 'Continue',
+            confirmButtonColor: '#ff9800'
+          });
+        } catch (error) {
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Something went wrong. Please try again.',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#d33'
+          });
+        } finally {
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Submit';
+        }
       });
     }
   }

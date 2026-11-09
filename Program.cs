@@ -28,18 +28,14 @@ builder.Services.AddScoped<GoogleFormService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Register the background service
+builder.Services.AddHostedService<ScheduleWorker>();
+
 builder.Services
     .AddAuthentication(options =>
     {
         options.DefaultScheme =
             CookieAuthenticationDefaults.AuthenticationScheme;
-    })
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Auth/Login";
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.ExpireTimeSpan = TimeSpan.FromHours(8);
     })
     .AddGoogle(options =>
     {
@@ -104,6 +100,13 @@ builder.Services
                 ));
             }
         };
+    })
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 
 var app = builder.Build();

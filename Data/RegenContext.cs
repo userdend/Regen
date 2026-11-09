@@ -11,6 +11,8 @@ public class RegenContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<ScheduledBatch> ScheduledBatches => Set<ScheduledBatch>();
+    public DbSet<ScheduledEntry> ScheduledEntries => Set<ScheduledEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +37,21 @@ public class RegenContext : DbContext
             entity.Property(u => u.Name)
                   .HasMaxLength(255)
                   .IsRequired();
+        });
+
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ScheduledEntry>(entity =>
+        {
+            entity.HasOne(e => e.Batch)
+                .WithMany(b => b.Entries)
+                .HasForeignKey(e => e.BatchId);
+
+            entity.HasIndex(e => new
+            {
+                e.Status,
+                e.ScheduledAt
+            });
         });
     }
 }
