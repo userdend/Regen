@@ -74,12 +74,7 @@ public class ScheduleWorker(
             .AsNoTracking()
             .Where(e =>
                 e.Status == "pending" &&
-                e.ScheduledAt <= DateTime.UtcNow &&
-                !db.ScheduledEntries.Any(previous =>
-                    previous.BatchId == e.BatchId &&
-                    previous.Sequence < e.Sequence &&
-                    previous.Status != "completed"
-                )
+                e.ScheduledAt <= DateTime.UtcNow
             )
             .OrderBy(e => e.ScheduledAt)
             .ThenBy(e => e.Sequence)
