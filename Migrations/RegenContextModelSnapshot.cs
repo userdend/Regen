@@ -56,8 +56,17 @@ namespace Regen.Migrations
                     b.Property<string>("LastError")
                         .HasColumnType("text");
 
+                    b.Property<int?>("LastHttpStatusCode")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("NextRetryAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime?>("ProcessedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ScheduledAt")
                         .HasColumnType("timestamp with time zone");

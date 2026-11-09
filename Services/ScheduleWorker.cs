@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Regen.Data;
+using Regen.Models;
 
 namespace Regen.Services;
 
-// Strict sequential execution per batch — ensure entry 2 doesn't execute before entry 1 finishes. (Done)
 // Retry mechanism — failed jobs retry automatically with exponential backoff.
 // Crash recovery and idempotency — prevent duplicate processing when restarting.
 // Concurrency — allow multiple independent batches to process simultaneously.
@@ -65,6 +65,7 @@ public class ScheduleWorker(
         CancellationToken ct)
     {
         using var scope = scopeFactory.CreateScope();
+        var now = DateTime.UtcNow;
 
         var db = scope.ServiceProvider
             .GetRequiredService<RegenContext>();
@@ -73,10 +74,14 @@ public class ScheduleWorker(
         var entry = await db.ScheduledEntries
             .AsNoTracking()
             .Where(e =>
-                e.Status == "pending" &&
-                e.ScheduledAt <= DateTime.UtcNow
+                (e.Status == "pending" && e.ScheduledAt <= now) ||
+                (
+                    e.Status == "retrying" &&
+                    e.NextRetryAt != null &&
+                    e.NextRetryAt <= now
+                )
             )
-            .OrderBy(e => e.ScheduledAt)
+            .OrderBy(e => e.Status == "retrying" ? e.NextRetryAt : e.ScheduledAt)
             .ThenBy(e => e.Sequence)
             .FirstOrDefaultAsync(ct);
 
@@ -88,8 +93,7 @@ public class ScheduleWorker(
         // Claim the entry before processing.
         var claimed = await db.ScheduledEntries
             .Where(e =>
-                e.Id == entry.Id &&
-                e.Status == "pending")
+                e.Id == entry.Id && (e.Status == "pending" || e.Status == "retrying"))
             .ExecuteUpdateAsync(
                 s => s.SetProperty(
                     e => e.Status, "processing"),
@@ -106,19 +110,7 @@ public class ScheduleWorker(
                 entry.BatchId
             );
 
-            // Prototype: simulate processing.
-            await Task.Delay(500, ct);
-
-            await db.ScheduledEntries
-                .Where(e => e.Id == entry.Id)
-                .ExecuteUpdateAsync(
-                    s => s
-                        .SetProperty(
-                            e => e.Status, "completed")
-                        .SetProperty(
-                            e => e.ProcessedAt,
-                            DateTime.UtcNow),
-                    ct);
+            await ProcessEntry(db, entry, ct);
 
             logger.LogInformation(
                 "Entry {EntryId} completed.",
@@ -148,6 +140,95 @@ public class ScheduleWorker(
                         .SetProperty(
                             e => e.LastError, ex.Message),
                     ct);
+        }
+    }
+
+    private async Task ProcessEntry(
+    RegenContext db,
+    ScheduledEntry entry,
+    CancellationToken ct)
+    {
+        const int maxRetries = 3;
+        const int baseDelaySeconds = 30;
+
+        try
+        {
+            // Prototype: simulate an HTTP 500 response.
+            await Task.Delay(500, ct);
+
+            var statusCode = 500;
+
+            if (statusCode == 500 && entry.RetryCount < maxRetries)
+            {
+                var retryNumber = entry.RetryCount + 1;
+
+                var delaySeconds = baseDelaySeconds *
+                    (int)Math.Pow(2, retryNumber - 1);
+
+                var nextRetryAt = DateTime.UtcNow
+                    .AddSeconds(delaySeconds);
+
+                await db.ScheduledEntries
+                    .Where(e =>
+                        e.Id == entry.Id &&
+                        e.Status == "processing")
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(e => e.Status, "retrying")
+                        .SetProperty(e => e.RetryCount, retryNumber)
+                        .SetProperty(e => e.NextRetryAt, nextRetryAt)
+                        .SetProperty(e => e.LastHttpStatusCode, statusCode)
+                        .SetProperty(e => e.LastError, "HTTP 500"),
+                        ct);
+
+                logger.LogWarning(
+                    "Entry {EntryId} returned HTTP 500. Retry {Retry}/3 at {NextRetry}",
+                    entry.Id,
+                    retryNumber,
+                    nextRetryAt
+                );
+
+                return;
+            }
+
+            if (statusCode >= 200 && statusCode < 300)
+            {
+                await db.ScheduledEntries
+                    .Where(e =>
+                        e.Id == entry.Id &&
+                        e.Status == "processing")
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(e => e.Status, "completed")
+                        .SetProperty(e => e.ProcessedAt, DateTime.UtcNow)
+                        .SetProperty(e => e.NextRetryAt, (DateTime?)null)
+                        .SetProperty(e => e.LastError, (string?)null)
+                        .SetProperty(e => e.LastHttpStatusCode, statusCode),
+                        ct);
+
+                return;
+            }
+
+            // Non-retryable error or retries exhausted.
+            await db.ScheduledEntries
+                .Where(e =>
+                    e.Id == entry.Id &&
+                    e.Status == "processing")
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(e => e.Status, "failed")
+                    .SetProperty(e => e.NextRetryAt, (DateTime?)null)
+                    .SetProperty(e => e.LastHttpStatusCode, statusCode)
+                    .SetProperty(e => e.LastError, $"HTTP {statusCode}"),
+                    ct);
+
+            logger.LogError(
+                "Entry {EntryId} permanently failed with HTTP {StatusCode}",
+                entry.Id,
+                statusCode
+            );
+        }
+        catch (OperationCanceledException)
+            when (ct.IsCancellationRequested)
+        {
+            throw;
         }
     }
 }

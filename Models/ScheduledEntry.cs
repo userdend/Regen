@@ -19,4 +19,9 @@ public class ScheduledEntry
     public DateTime? ProcessedAt { get; set; }
 
     public string? LastError { get; set; }
+    public int RetryCount { get; set; } = 0;
+
+    public DateTime? NextRetryAt { get; set; }
+
+    public int? LastHttpStatusCode { get; set; }
 }
