@@ -187,10 +187,10 @@ async function loadFailedBatches() {
                 </span>
             </td>
             <td>
-                <button class="btn btn-sm btn-primary retry-btn">
+                <a href="" class="text-primary retry-btn">
                     <i class="icon-base ri ri-refresh-line me-2"></i>
                     Retry
-                </button>
+                </a>
             </td>
         `;
 
