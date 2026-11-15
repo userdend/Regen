@@ -4,20 +4,24 @@
 
 @section VendorStyles {
   <link rel="stylesheet" href="~/vendor/libs/apex-charts/apex-charts.css" />
+  <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.css" />
 }
 
 @section VendorScripts {
   <script src="~/vendor/libs/apex-charts/apexcharts.js"></script>
+  <script src="~/vendor/libs/sweetalert2/sweetalert2.js"></script>
 }
 
 @section PageScripts {
   <script>
     window.appUrls = {
       getDashboardStats: "@Url.Action("GetStats", "Dashboards")",
+      getFailedBatches: "@Url.Action("GetFailedBatches", "Dashboards")",
+      retryFailedBatches: "@Url.Action("RetryBatch", "Dashboards")",
     };
   </script>
   @* <script src="~/js/dashboards-analytics.js"></script> *@
-  <script src="~/custom/js/regen-dashboard-stats.js"></script>
+  <script src="~/custom/js/regen-dashboard-stats.js" asp-append-version="true"></script>
 }
 
 @* ************** Content ************** *@
@@ -722,187 +726,25 @@
   <!-- Data Tables -->
   <div class="col-xl-12 col-md-12">
     <div class="card overflow-hidden">
+      <div class="card-header">
+        <h5 class="mb-0">Failed Batches</h5>
+      </div>
       <div class="table-responsive">
         <table class="table table-sm">
           <thead>
             <tr>
-              <th class="text-truncate">User</th>
-              <th class="text-truncate">Email</th>
-              <th class="text-truncate">Role</th>
-              <th class="text-truncate">Status</th>
+              <th>Batch ID</th>
+              <th>Created At</th>
+              <th>Total</th>
+              <th>Completed</th>
+              <th>Failed</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Jordan Stevenson</h6>
-                    <small class="text-truncate">&#64;amiccoo</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">susanna.Lind57@gmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-vip-crown-line icon-22px text-primary me-2"></i>
-                  <span>Admin</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-warning rounded-pill">Pending</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/3.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Benedetto Rossiter</h6>
-                    <small class="text-truncate">&#64;brossiter15</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">estelle.Bailey10@gmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-edit-box-line text-warning icon-22px me-2"></i>
-                  <span>Editor</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/2.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Bentlee Emblin</h6>
-                    <small class="text-truncate">&#64;bemblinf</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">milo86&#64;hotmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-computer-line text-danger icon-22px me-2"></i>
-                  <span>Author</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/5.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Bertha Biner</h6>
-                    <small class="text-truncate">&#64;bbinerh</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">lonnie35&#64;hotmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-edit-box-line text-warning icon-22px me-2"></i>
-                  <span>Editor</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-warning rounded-pill">Pending</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/4.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Beverlie Krabbe</h6>
-                    <small class="text-truncate">&#64;bkrabbe1d</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">ahmad_Collins&#64;yahoo.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-pie-chart-2-line icon-22px text-info me-2"></i>
-                  <span>Maintainer</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/7.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Bradan Rosebotham</h6>
-                    <small class="text-truncate">&#64;brosebothamz</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">tillman.Gleason68&#64;hotmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-edit-box-line text-warning icon-22px me-2"></i>
-                  <span>Editor</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-warning rounded-pill">Pending</span></td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/6.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Bree Kilday</h6>
-                    <small class="text-truncate">&#64;bkildayr</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">otho21&#64;gmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-user-3-line icon-22px text-success me-2"></i>
-                  <span>Subscriber</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-            </tr>
-            <tr class="border-transparent">
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-4">
-                    <img src="~/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
-                  </div>
-                  <div>
-                    <h6 class="mb-0 text-truncate">Breena Gallemore</h6>
-                    <small class="text-truncate">&#64;bgallemore6</small>
-                  </div>
-                </div>
-              </td>
-              <td class="text-truncate">florencio.Little&#64;hotmail.com</td>
-              <td class="text-truncate">
-                <div class="d-flex align-items-center">
-                  <i class="icon-base ri ri-user-3-line icon-22px text-success me-2"></i>
-                  <span>Subscriber</span>
-                </div>
-              </td>
-              <td><span class="badge bg-label-secondary rounded-pill">Inactive</span></td>
-            </tr>
+          <tbody id="failedBatchesTable">
           </tbody>
         </table>
+        @Html.AntiForgeryToken()
       </div>
     </div>
   </div>
