@@ -164,6 +164,46 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="divider divider-dashed">
+                                        <div class="divider-text">OR</div>
+                                    </div>
+                                    <div class="row g-6">
+                                        <div class="col-sm-12">
+                                            <div class="content-header mb-4">
+                                                <h6 class="mb-0">Load Saved Configuration</h6>
+                                                <small>Pick Your Google Form URL.</small>
+                                            </div>
+                                            @model List<Regen.Models.ViewModels.SavedConfigurationViewModel>
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Interval</th>
+                                                            <th>Created At</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var config in Model)
+                                                        {
+                                                            <tr>
+                                                                <td>@config.Name</td>
+                                                                <td>@(config.IntervalMilliseconds / 1000.0) seconds</td>
+                                                                <td>@config.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-sm btn-primary"
+                                                                            data-config-id="@config.Id">
+                                                                        Load
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!-- Google Form Details -->
                                 <div id="google-form-details-section" class="content">

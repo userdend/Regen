@@ -1,24 +1,39 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Regen.Models;
+using Regen.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Regen.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Regen.Controllers;
 
-public class HomeController : Controller
+public class HomeController(RegenContext db) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
     [Authorize]
-    public IActionResult Generator()
+    public async Task<IActionResult> Generator()
     {
-        return View();
+        var userId = Guid.Parse(
+        User.FindFirstValue("RegenUserId")!
+    );
+
+        var configurations = await db.SavedConfigurations
+            .AsNoTracking()
+            .Where(c => c.UserId == userId)
+            .OrderByDescending(c => c.CreatedAt)
+            .Select(c => new SavedConfigurationViewModel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Url = c.Url,
+                IntervalMilliseconds = c.IntervalMilliseconds,
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt
+            })
+            .ToListAsync();
+
+        return View(configurations);
     }
 
     public IActionResult Index()
