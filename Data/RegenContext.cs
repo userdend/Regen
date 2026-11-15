@@ -13,6 +13,7 @@ public class RegenContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<ScheduledBatch> ScheduledBatches => Set<ScheduledBatch>();
     public DbSet<ScheduledEntry> ScheduledEntries => Set<ScheduledEntry>();
+    public DbSet<SavedConfiguration> SavedConfigurations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,8 +40,6 @@ public class RegenContext : DbContext
                   .IsRequired();
         });
 
-        base.OnModelCreating(modelBuilder);
-
         modelBuilder.Entity<ScheduledEntry>(entity =>
         {
             entity.HasOne(e => e.Batch)
@@ -52,6 +51,27 @@ public class RegenContext : DbContext
                 e.Status,
                 e.ScheduledAt
             });
+        });
+
+        modelBuilder.Entity<SavedConfiguration>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .IsRequired();
+
+            entity.Property(e => e.Url)
+                .IsRequired();
+
+            entity.Property(e => e.Config)
+                .HasColumnType("jsonb")
+                .IsRequired();
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

@@ -5,4 +5,8 @@ public class CreateScheduleRequest
     public int IntervalMilliseconds { get; set; }
 
     public List<string> Entries { get; set; } = new();
+
+    public FormConfigurationRequest DataMap { get; set; } = new();
+
+    public bool SaveConfiguration { get; set; }
 }

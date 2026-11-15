@@ -308,6 +308,54 @@ function prefillFoot() {
   return config;
 }
 
+function buildFormConfiguration() {
+  const originalUrl = localStorage.getItem('originalURL');
+  const config = new Map();
+
+  for (const [key] of entryMapping) {
+    const count = document.querySelectorAll(`input[id^="${key}-"]`).length;
+
+    // If time or date.
+    const time_date = document.getElementById(`${key}-start`) || document.getElementById(`${key}-end`);
+
+    if (time_date) {
+      const is_start = document.getElementById(`${key}-start`);
+      const is_end = document.getElementById(`${key}-end`);
+
+      if (is_start) {
+        config.set(`${key}-start`, is_start.value);
+      }
+
+      if (is_end) {
+        config.set(`${key}-end`, is_end.value);
+      }
+    }
+
+    // If not date time.
+    else if (!time_date && count != 0) {
+      for (let i = 0; i < count; i++) {
+        const _key = `${key}-${i}`;
+        const _value = document.getElementById(_key).value;
+        config.set(_key, _value);
+      }
+    }
+
+    // If short or long prompt.
+    else {
+      const para_key = `${key}`;
+      const para_value = document.getElementById(para_key).value?.split('\n');
+      config.set(para_key, para_value);
+    }
+  }
+
+  const decodeConfig = JSON.stringify(Array.from(config.entries()));
+
+  return {
+    url: originalUrl,
+    config: decodeConfig
+  };
+}
+
 async function collectEntries() {
   const googleFormRespondent = document.getElementById('google-form-respondent');
   const googleFormTimestamp = document.getElementById('google-form-timestamp');
@@ -321,9 +369,13 @@ async function collectEntries() {
     entryCollection.push(`${urlHeader}${urlBody}${prefillFoot()}`);
   }
 
+  const configuration = buildFormConfiguration();
+
   const payload = {
     intervalMilliseconds: parseInt(googleFormTimestamp.value, 10),
-    entries: entryCollection
+    entries: entryCollection,
+    dataMap: configuration,
+    saveConfiguration: document.getElementById('saveConfiguration').checked
   };
 
   return payload;

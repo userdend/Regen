@@ -149,6 +149,20 @@ public class GoogleFormController(
 
         db.ScheduledBatches.Add(batch);
 
+        if (request.SaveConfiguration)
+        {
+            var savedConfig = new SavedConfiguration
+            {
+                UserId = userId,
+                Name = $"Configuration {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}",
+                Url = request.DataMap.Url,
+                Config = request.DataMap.Config,
+                IntervalMilliseconds = request.IntervalMilliseconds
+            };
+
+            db.SavedConfigurations.Add(savedConfig);
+        }
+
         await db.SaveChangesAsync(ct);
 
         return Accepted(new
