@@ -28,7 +28,8 @@
         window.appUrls = {
             getOriginalUrl: "@Url.Action("GetGoogleFormOriginalUrl", "GoogleForm")",
             getFormContent: "@Url.Action("GetGoogleFormContent", "GoogleForm")",
-            createFormSubmission: "@Url.Action("CreateGoogleSubmission", "GoogleForm")"
+            createFormSubmission: "@Url.Action("CreateGoogleSubmission", "GoogleForm")",
+            getSavedConfiguration: "@Url.Action("GetSavedConfiguration", "GoogleForm")"
         };
     </script>
     <script src="~/js/forms-sliders.js"></script>
@@ -56,208 +57,170 @@
             AI</span> <i class="icon-base ri ri-arrow-right-line icon-sm"></i>
         </template>
 
-        <template id="prompt-template">
-            <div class="form-floating form-floating-outline">
-                <input type="text" id="first-name-modern-vertical" class="form-control" placeholder="Describe your request" />
-                <label for="first-name-modern-vertical">Prompt</label>
-            </div>
-        </template>
+        <template id="default-next-load-config-btn-template">
+            <span class="align-middle d-sm-inline-block d-none me-sm-1">Load
+            </template>
 
-        <template id="form-container-template">
-            <div class="accordion" id="accordion-front">
-            </div>
-        </template>
+            <template id="prompt-template">
+                <div class="form-floating form-floating-outline">
+                    <input type="text" id="first-name-modern-vertical" class="form-control" placeholder="Describe your request" />
+                    <label for="first-name-modern-vertical">Prompt</label>
+                </div>
+            </template>
 
-        <template id="question-card-template">
-            <div class="accordion-item border">
-                <h2 class="accordion-header" id="head-One">
-                    <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
-                            data-bs-target="#accordion-one" aria-expanded="true" aria-controls="accordion-one">
-                        @* Title *@
-                    </button>
-                </h2>
+            <template id="form-container-template">
+                <div class="accordion" id="accordion-front">
+                </div>
+            </template>
 
-                <div id="accordion-one" class="accordion-collapse collapse" @* data-bs-parent="#accordion-front" *@
-                     aria-labelledby="accordion-one">
-                    <div class="accordion-body">
-                        @* Content. *@
+            <template id="question-card-template">
+                <div class="accordion-item border">
+                    <h2 class="accordion-header" id="head-One">
+                        <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#accordion-one" aria-expanded="true" aria-controls="accordion-one">
+                            @* Title *@
+                        </button>
+                    </h2>
+
+                    <div id="accordion-one" class="accordion-collapse collapse" @* data-bs-parent="#accordion-front" *@
+                         aria-labelledby="accordion-one">
+                        <div class="accordion-body">
+                            @* Content. *@
+                        </div>
                     </div>
                 </div>
-            </div>
-        </template>
+            </template>
 
-        @* ************** Content ************** *@
-        <!-- Default -->
-        <div class="row">
-            <!-- Modern Vertical Wizard -->
-            <div class="col-12">
-                <div class="bs-stepper vertical wizard-modern wizard-modern-vertical mt-2">
-                    <div class="bs-stepper-header gap-lg-2">
-                        <div class="step" data-target="#google-form-url-section">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-number">01</span>
-                                    <span class="d-flex flex-column gap-1 ms-2">
-                                        <span class="bs-stepper-title">Google Form URL</span>
-                                        <span class="bs-stepper-subtitle">Setup</span>
+            @* ************** Content ************** *@
+            <!-- Default -->
+            <div class="row">
+                <!-- Modern Vertical Wizard -->
+                <div class="col-12">
+                    <div class="bs-stepper vertical wizard-modern wizard-modern-vertical mt-2">
+                        <div class="bs-stepper-header gap-lg-2">
+                            <div class="step" data-target="#google-form-url-section">
+                                <button type="button" class="step-trigger">
+                                    <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
+                                    <span class="bs-stepper-label">
+                                        <span class="bs-stepper-number">01</span>
+                                        <span class="d-flex flex-column gap-1 ms-2">
+                                            <span class="bs-stepper-title">Google Form URL</span>
+                                            <span class="bs-stepper-subtitle">Setup</span>
+                                        </span>
                                     </span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line"></div>
-                        <div class="step" data-target="#google-form-details-section">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-number">02</span>
-                                    <span class="d-flex flex-column gap-1 ms-2">
-                                        <span class="bs-stepper-title">Google Form Details</span>
-                                        <span class="bs-stepper-subtitle">Configure</span>
+                                </button>
+                            </div>
+                            <div class="line"></div>
+                            <div class="step" data-target="#google-form-details-section">
+                                <button type="button" class="step-trigger">
+                                    <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
+                                    <span class="bs-stepper-label">
+                                        <span class="bs-stepper-number">02</span>
+                                        <span class="d-flex flex-column gap-1 ms-2">
+                                            <span class="bs-stepper-title">Google Form Details</span>
+                                            <span class="bs-stepper-subtitle">Configure</span>
+                                        </span>
                                     </span>
-                                </span>
-                            </button>
-                        </div>
-                        <div class="line"></div>
-                        <div class="step" data-target="#generate-settings-section">
-                            <button type="button" class="step-trigger">
-                                <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
-                                <span class="bs-stepper-label">
-                                    <span class="bs-stepper-number">03</span>
-                                    <span class="d-flex flex-column gap-1 ms-2">
-                                        <span class="bs-stepper-title">Generate</span>
-                                        <span class="bs-stepper-subtitle">Set</span>
+                                </button>
+                            </div>
+                            <div class="line"></div>
+                            <div class="step" data-target="#generate-settings-section">
+                                <button type="button" class="step-trigger">
+                                    <span class="bs-stepper-circle"><i class="icon-base ri ri-check-line"></i></span>
+                                    <span class="bs-stepper-label">
+                                        <span class="bs-stepper-number">03</span>
+                                        <span class="d-flex flex-column gap-1 ms-2">
+                                            <span class="bs-stepper-title">Generate</span>
+                                            <span class="bs-stepper-subtitle">Set</span>
+                                        </span>
                                     </span>
-                                </span>
-                            </button>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bs-stepper-content">
-                        <form onSubmit="return false">
-                            @Html.AntiForgeryToken()
-                            <!-- Google Form URL -->
-                            <div id="google-form-url-section" class="content">
-                                <div class="content-header mb-4">
-                                    <h6 class="mb-0">Google Form URL</h6>
-                                    <small>Enter Your Google Form URL.</small>
-                                </div>
-                                <div class="row g-6">
-                                    <div class="col-sm-12">
-                                        <div class="form-floating form-floating-outline">
-                                            <input type="text" id="google-form-url" class="form-control"
-                                                   placeholder="https://forms.gle works too!" />
-                                            <label for="google-form-url">https://docs.google.com/forms/</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 d-flex justify-content-between">
-                                        <button class="btn btn-outline-secondary btn-prev" disabled>
-                                            <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
-                                            <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                                        </button>
-                                        <div><button class="btn btn-primary btn-next-manual"><span
-                                            class="align-middle d-sm-inline-block d-none me-sm-1">Generate
-                                            Manually</span>
-                                            <i class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
-                                            <button class="btn btn-primary btn-next-ai"><span
-                                                class="align-middle d-sm-inline-block d-none me-sm-1">Generate with
-                                                AI</span> <i class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="divider divider-dashed">
-                                        <div class="divider-text">OR</div>
-                                    </div>
-                                    <div class="row g-6">
-                                        <div class="col-sm-12">
-                                            <div class="content-header mb-4">
-                                                <h6 class="mb-0">Load Saved Configuration</h6>
-                                                <small>Pick Your Google Form URL.</small>
-                                            </div>
-                                            @model List<Regen.Models.ViewModels.SavedConfigurationViewModel>
-                                            <div class="table-responsive">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>Interval</th>
-                                                            <th>Created At</th>
-                                                            <th>Actions</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach (var config in Model)
-                                                        {
-                                                            <tr>
-                                                                <td>@config.Name</td>
-                                                                <td>@(config.IntervalMilliseconds / 1000.0) seconds</td>
-                                                                <td>@config.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-sm btn-primary"
-                                                                            data-config-id="@config.Id">
-                                                                        Load
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Google Form Details -->
-                                <div id="google-form-details-section" class="content">
+                        <div class="bs-stepper-content">
+                            <form onSubmit="return false">
+                                @Html.AntiForgeryToken()
+                                <!-- Google Form URL -->
+                                <div id="google-form-url-section" class="content">
                                     <div class="content-header mb-4">
-                                        <h6 class="mb-0">Google Form Details</h6>
-                                        <small>Configure Your Google Form Details.</small>
+                                        <h6 class="mb-0">Google Form URL</h6>
+                                        <small>Enter Your Google Form URL.</small>
                                     </div>
                                     <div class="row g-6">
                                         <div class="col-sm-12">
-                                            <div id="google-form-details-display">
-                                                <small class="text-secondary">Not available.</small>
+                                            <div class="form-floating form-floating-outline">
+                                                <input type="text" id="google-form-url" class="form-control"
+                                                       placeholder="https://forms.gle works too!" />
+                                                <label for="google-form-url">https://docs.google.com/forms/</label>
                                             </div>
                                         </div>
                                         <div class="col-12 d-flex justify-content-between">
-                                            <button class="btn btn-outline-secondary btn-prev">
+                                            <button class="btn btn-outline-secondary btn-prev" disabled>
                                                 <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
                                                 <span class="align-middle d-sm-inline-block d-none">Previous</span>
                                             </button>
-                                            <button class="btn btn-primary btn-next"><span
-                                                class="align-middle d-sm-inline-block d-none me-sm-1">Next</span> <i
-                                                class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                            <div><button class="btn btn-primary btn-next-manual"><span
+                                                class="align-middle d-sm-inline-block d-none me-sm-1">Generate
+                                                Manually</span>
+                                                <i class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                                <button class="btn btn-primary btn-next-ai"><span
+                                                    class="align-middle d-sm-inline-block d-none me-sm-1">Generate with
+                                                    AI</span> <i class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="divider divider-dashed">
+                                            <div class="divider-text">OR</div>
+                                        </div>
+                                        <div class="row g-6">
+                                            <div class="col-sm-12">
+                                                <div class="content-header mb-4">
+                                                    <h6 class="mb-0">Load Saved Configuration</h6>
+                                                    <small>Pick Your Google Form URL.</small>
+                                                </div>
+                                                @model List<Regen.Models.ViewModels.SavedConfigurationViewModel>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Interval</th>
+                                                                <th>Created At</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var config in Model)
+                                                            {
+                                                                <tr>
+                                                                    <td>@config.Name</td>
+                                                                    <td>@(config.IntervalMilliseconds / 1000.0) seconds</td>
+                                                                    <td>@config.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td>
+                                                                    <td>
+                                                                        <button type="button"
+                                                                                class="btn btn-sm btn-primary btn-next-load-config"
+                                                                                data-config-id="@config.Id">
+                                                                            Load
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Generate -->
-                                    <div id="generate-settings-section" class="content">
+                                    <!-- Google Form Details -->
+                                    <div id="google-form-details-section" class="content">
                                         <div class="content-header mb-4">
-                                            <h6 class="mb-0">Generate</h6>
-                                            <small>Enter Your Generate Settings.</small>
+                                            <h6 class="mb-0">Google Form Details</h6>
+                                            <small>Configure Your Google Form Details.</small>
                                         </div>
                                         <div class="row g-6">
-                                            <div class="col-sm-6">
-                                                <div class="form-floating form-floating-outline">
-                                                    <input type="number" value="0" id="google-form-respondent" class="form-control" />
-                                                    <label for="google-form-respondent">Respondent</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <select id="google-form-timestamp" class="form-select">
-                                                    <option value="1000" selected>1 Second</option>
-                                                    <option value="15000">15 Seconds</option>
-                                                    <option value="30000">30 Seconds</option>
-                                                    <option value="45000">45 Seconds</option>
-                                                    <option value="60000">1 Minute</option>
-                                                    <option value="300000">5 Minutes</option>
-                                                    <option value="600000">10 Minutes</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="saveConfiguration" />
-                                                    <label class="form-check-label" for="saveConfiguration">
-                                                        Save Configuration
-                                                    </label>
+                                            <div class="col-sm-12">
+                                                <div id="google-form-details-display">
+                                                    <small class="text-secondary">Not available.</small>
                                                 </div>
                                             </div>
                                             <div class="col-12 d-flex justify-content-between">
@@ -265,13 +228,56 @@
                                                     <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
                                                     <span class="align-middle d-sm-inline-block d-none">Previous</span>
                                                 </button>
-                                                <button class="btn btn-primary btn-submit">Submit</button>
+                                                <button class="btn btn-primary btn-next"><span
+                                                    class="align-middle d-sm-inline-block d-none me-sm-1">Next</span> <i
+                                                    class="icon-base ri ri-arrow-right-line icon-sm"></i></button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </form>
+                                        <!-- Generate -->
+                                        <div id="generate-settings-section" class="content">
+                                            <div class="content-header mb-4">
+                                                <h6 class="mb-0">Generate</h6>
+                                                <small>Enter Your Generate Settings.</small>
+                                            </div>
+                                            <div class="row g-6">
+                                                <div class="col-sm-6">
+                                                    <div class="form-floating form-floating-outline">
+                                                        <input type="number" value="0" id="google-form-respondent" class="form-control" />
+                                                        <label for="google-form-respondent">Respondent</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <select id="google-form-timestamp" class="form-select">
+                                                        <option value="1000" selected>1 Second</option>
+                                                        <option value="15000">15 Seconds</option>
+                                                        <option value="30000">30 Seconds</option>
+                                                        <option value="45000">45 Seconds</option>
+                                                        <option value="60000">1 Minute</option>
+                                                        <option value="300000">5 Minutes</option>
+                                                        <option value="600000">10 Minutes</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="saveConfiguration" />
+                                                        <label class="form-check-label" for="saveConfiguration">
+                                                            Save Configuration
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 d-flex justify-content-between">
+                                                    <button class="btn btn-outline-secondary btn-prev">
+                                                        <i class="icon-base ri ri-arrow-left-line icon-sm me-sm-1 me-0"></i>
+                                                        <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                                                    </button>
+                                                    <button class="btn btn-primary btn-submit">Submit</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
+                        <!-- /Modern Vertical Wizard -->
                     </div>
-                    <!-- /Modern Vertical Wizard -->
-                </div>

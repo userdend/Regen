@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Regen.Controllers;
 
+[Authorize]
 public class GoogleFormController(
     RegenContext db,
     GoogleFormService googleFormService,
@@ -85,7 +86,6 @@ public class GoogleFormController(
         }
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateGoogleSubmission(
         [FromBody] CreateScheduleRequest request,
@@ -174,34 +174,25 @@ public class GoogleFormController(
         });
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetGoogleSubmissionStatus(
-        Guid id,
-        CancellationToken ct)
+    [HttpPost]
+    public async Task<IActionResult> GetSavedConfiguration(Guid configId)
     {
-        var batch = await db.ScheduledBatches
+        var userId = Guid.Parse(
+            User.FindFirst("RegenUserId")!.Value
+        );
+
+        var savedConfiguration = await db.SavedConfigurations
             .AsNoTracking()
-            .Where(b => b.Id == id)
+            .Where(b => b.UserId == userId)
+            .Where(b => b.Id == configId)
             .Select(b => new
             {
-                b.Id,
+                b.Url,
+                b.Config,
                 b.IntervalMilliseconds,
-                b.CreatedAt,
-                Entries = b.Entries
-                    .OrderBy(e => e.Sequence)
-                    .Select(e => new
-                    {
-                        e.Id,
-                        e.Sequence,
-                        e.Status,
-                        e.ScheduledAt,
-                        e.ProcessedAt,
-                        e.LastError
-                    })
-                    .ToList()
             })
-            .FirstOrDefaultAsync(ct);
+            .FirstOrDefaultAsync();
 
-        return batch is null ? NotFound() : Ok(batch);
+        return savedConfiguration is null ? NotFound() : Ok(savedConfiguration);
     }
 }

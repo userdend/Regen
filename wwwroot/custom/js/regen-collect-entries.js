@@ -274,7 +274,7 @@ const configMapping = {
 
 // Replace component from the link.
 function prefillHead() {
-  const originalUrl = localStorage.getItem('originalURL');
+  const originalUrl = localStorage.getItem('form-original-url');
   return originalUrl.replace('/d/', '/u/0/d/').replace('viewform', 'formResponse?');
 }
 
@@ -309,7 +309,7 @@ function prefillFoot() {
 }
 
 function buildFormConfiguration() {
-  const originalUrl = localStorage.getItem('originalURL');
+  const originalUrl = localStorage.getItem('form-original-url');
   const config = new Map();
 
   for (const [key] of entryMapping) {

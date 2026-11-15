@@ -26,10 +26,12 @@ $(function () {
     });
   }
 });
+
 (function () {
   const googleFormUrlInput = document.getElementById('google-form-url');
   const defaultNextManualBtnTemplate = document.getElementById('default-next-manual-btn-template');
   const defaultNextAiBtnTemplate = document.getElementById('default-next-ai-btn-template');
+  const defaultNextLoadConfigBtnTemplate = document.getElementById('default-next-load-config-btn-template');
   const defaultLoadingDisplayBtnTemplate = document.getElementById('default-loading-display-btn-template');
   const googleFormDetailsDisplay = document.getElementById('google-form-details-display');
 
@@ -44,6 +46,9 @@ $(function () {
       : [],
     wizardModernVerticalBtnNextAiList = wizardModernVertical
       ? [].slice.call(wizardModernVertical.querySelectorAll('.btn-next-ai'))
+      : [],
+    wizardModernVerticalBtnNextLoadConfigList = wizardModernVertical
+      ? [].slice.call(wizardModernVertical.querySelectorAll('.btn-next-load-config'))
       : [],
     wizardModernVerticalBtnNextList = wizardModernVertical
       ? [].slice.call(wizardModernVertical.querySelectorAll('.btn-next'))
@@ -84,7 +89,7 @@ $(function () {
             wizardModernVerticalBtnManualNext.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
 
             const url = await getOriginalUrl(googleFormUrlInput.value);
-            localStorage.setItem('originalURL', url);
+            localStorage.setItem('form-original-url', url);
             const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
             const response = await fetch(window.appUrls.getFormContent, {
               method: 'POST',
@@ -129,6 +134,84 @@ $(function () {
             return;
           }
           modernVerticalStepper.next();
+        });
+      });
+    }
+
+    if (wizardModernVerticalBtnNextLoadConfigList) {
+      wizardModernVerticalBtnNextLoadConfigList.forEach(wizardModernVerticalBtnLoadConfigNext => {
+        wizardModernVerticalBtnLoadConfigNext.addEventListener('click', async event => {
+          if (onProcessing) {
+            return;
+          }
+
+          const configId = wizardModernVerticalBtnLoadConfigNext.dataset.configId;
+
+          try {
+            onProcessing = true;
+            wizardModernVerticalBtnLoadConfigNext.disabled = true;
+            wizardModernVerticalBtnLoadConfigNext.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const configResponse = await fetch(
+              `${window.appUrls.getSavedConfiguration}?configId=${encodeURIComponent(configId)}`,
+              {
+                method: 'POST',
+                headers: {
+                  RequestVerificationToken: token
+                }
+              }
+            );
+
+            if (!configResponse.ok) {
+              throw new Error(`Network response is not ok: ${configResponse.statusText}`);
+            }
+
+            const configData = await configResponse.json();
+            const url = configData.url;
+            localStorage.setItem('form-original-url', url);
+            const config = JSON.parse(configData.config);
+            const interval = configData.intervalMilliseconds;
+
+            const formResponse = await fetch(window.appUrls.getFormContent, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                RequestVerificationToken: token
+              },
+              body: JSON.stringify({ url })
+            });
+
+            if (!formResponse.ok) {
+              throw new Error(`Network response is not ok: ${formResponse.statusText}`);
+            }
+
+            const formData = await formResponse.json();
+            googleFormDetailsDisplay.innerHTML = '';
+            configureUi(formData, googleFormDetailsDisplay);
+
+            for (const [key, value] of config) {
+              document.getElementById(key).value = value;
+              document.getElementById(key).dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
+            document.getElementById('google-form-timestamp').value = String(interval);
+
+            modernVerticalStepper.next();
+          } catch (error) {
+            console.error(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Something went wrong. Please try again.',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#d33'
+            });
+          } finally {
+            onProcessing = false;
+            wizardModernVerticalBtnLoadConfigNext.disabled = false;
+            wizardModernVerticalBtnLoadConfigNext.innerHTML = defaultNextLoadConfigBtnTemplate.innerHTML;
+          }
         });
       });
     }
