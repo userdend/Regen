@@ -4,11 +4,6 @@ using Regen.Models;
 
 namespace Regen.Services;
 
-// Retry mechanism — failed jobs retry automatically with exponential backoff.
-// Crash recovery and idempotency — prevent duplicate processing when restarting.
-// Concurrency — allow multiple independent batches to process simultaneously.
-// Dashboard — show users their scheduled jobs, progress, failures, and history.
-
 public class ScheduleWorker(
     IServiceScopeFactory scopeFactory,
     ILogger<ScheduleWorker> logger

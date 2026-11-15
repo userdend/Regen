@@ -10,6 +10,7 @@ services:
       DOTNET_USE_POLLING_FILE_WATCHER: 'true'
       Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
       Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
+      Admin__Email: ${ADMIN_EMAIL}
       PATH: /root/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - .:/Regen

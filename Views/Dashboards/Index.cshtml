@@ -3,21 +3,27 @@
 }
 
 @section VendorStyles {
-<link rel="stylesheet" href="~/vendor/libs/apex-charts/apex-charts.css" />
+  <link rel="stylesheet" href="~/vendor/libs/apex-charts/apex-charts.css" />
 }
 
 @section VendorScripts {
-<script src="~/vendor/libs/apex-charts/apexcharts.js"></script>
+  <script src="~/vendor/libs/apex-charts/apexcharts.js"></script>
 }
 
 @section PageScripts {
-<script src="~/js/dashboards-analytics.js"></script>
+  <script>
+    window.appUrls = {
+      getDashboardStats: "@Url.Action("GetStats", "Dashboards")",
+    };
+  </script>
+  @* <script src="~/js/dashboards-analytics.js"></script> *@
+  <script src="~/custom/js/regen-dashboard-stats.js"></script>
 }
 
 @* ************** Content ************** *@
 <div class="row gy-6">
   <!-- Congratulations card -->
-  <div class="col-md-12 col-lg-4">
+  @* <div class="col-md-12 col-lg-4">
     <div class="card">
       <div class="card-body text-nowrap">
         <h5 class="card-title mb-0 flex-wrap text-nowrap">Congratulations Norris! 🎉</h5>
@@ -26,19 +32,21 @@
         <p class="mb-2">78% of target 🚀</p>
         <a href="javascript:;" class="btn btn-sm btn-primary">View Sales</a>
       </div>
-      <img src="~/img/illustrations/trophy.png" class="position-absolute bottom-0 end-0 me-5 mb-5" width="83" alt="view sales" />
+      <img src="~/img/illustrations/trophy.png" class="position-absolute bottom-0 end-0 me-5 mb-5" width="83"
+           alt="view sales" />
     </div>
-  </div>
+  </div> *@
   <!--/ Congratulations card -->
 
   <!-- Transactions -->
-  <div class="col-lg-8">
+  @* <div class="col-lg-8">
     <div class="card h-100">
       <div class="card-header">
         <div class="d-flex align-items-center justify-content-between">
           <h5 class="card-title m-0 me-2">Transactions</h5>
           <div class="dropdown">
-            <button class="btn text-body-secondary p-0" type="button" id="transactionID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn text-body-secondary p-0" type="button" id="transactionID" data-bs-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
               <i class="icon-base ri ri-more-2-line icon-24px"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
@@ -107,20 +115,21 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> *@
   <!--/ Transactions -->
 
   <!-- Weekly Overview Chart -->
-  <div class="col-xl-4 col-md-6">
+  <div class="col-xl-8 col-md-12">
     <div class="card">
       <div class="card-header">
         <div class="d-flex justify-content-between">
-          <h5 class="mb-1">Weekly Overview</h5>
+          <h5 class="mb-1">Hourly Overview</h5>
           <div class="dropdown">
-            <button class="btn text-body-secondary p-0" type="button" id="weeklyOverviewDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn text-body-secondary p-0" type="button" id="hourlyOverviewDropdown"
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="icon-base ri ri-more-2-line icon-24px"></i>
             </button>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="weeklyOverviewDropdown">
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="hourlyOverviewDropdown">
               <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
               <a class="dropdown-item" href="javascript:void(0);">Share</a>
               <a class="dropdown-item" href="javascript:void(0);">Update</a>
@@ -129,15 +138,15 @@
         </div>
       </div>
       <div class="card-body pt-lg-2">
-        <div id="weeklyOverviewChart"></div>
+        <div id="hourlyOverviewChart"></div>
         <div class="mt-1 mt-md-3">
           <div class="d-flex align-items-center gap-4">
-            <h4 class="mb-0">45%</h4>
-            <p class="mb-0">Your sales performance is 45% 😎 better compared to last month</p>
+            <h4 class="mb-0" id="hourlyTotal">0</h4>
+            <p class="mb-0">Successfully processed entries in the last 6 hours</p>
           </div>
-          <div class="d-grid mt-3 mt-md-4">
+          @* <div class="d-grid mt-3 mt-md-4">
             <button class="btn btn-primary" type="button">Details</button>
-          </div>
+          </div> *@
         </div>
       </div>
     </div>
@@ -145,12 +154,13 @@
   <!--/ Weekly Overview Chart -->
 
   <!-- Total Earnings -->
-  <div class="col-xl-4 col-md-6">
+  @* <div class="col-xl-4 col-md-6">
     <div class="card">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title m-0 me-2">Total Earning</h5>
         <div class="dropdown">
-          <button class="btn text-body-secondary p-0" type="button" id="totalEarnings" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button class="btn text-body-secondary p-0" type="button" id="totalEarnings" data-bs-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
             <i class="icon-base ri ri-more-2-line icon-24px"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalEarnings">
@@ -184,7 +194,8 @@
               <div>
                 <h6 class="mb-2">$24,895.65</h6>
                 <div class="progress bg-label-primary" style="height: 4px;">
-                  <div class="progress-bar bg-primary" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-primary" style="width: 75%" role="progressbar" aria-valuenow="75"
+                       aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>
@@ -201,7 +212,8 @@
               <div>
                 <h6 class="mb-2">$8,6500.20</h6>
                 <div class="progress bg-label-info" style="height: 4px;">
-                  <div class="progress-bar bg-info" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-info" style="width: 75%" role="progressbar" aria-valuenow="75"
+                       aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>
@@ -218,7 +230,8 @@
               <div>
                 <h6 class="mb-2">$1,2450.80</h6>
                 <div class="progress bg-label-secondary" style="height: 4px;">
-                  <div class="progress-bar bg-secondary" style="width: 75%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar bg-secondary" style="width: 75%" role="progressbar" aria-valuenow="75"
+                       aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
             </div>
@@ -226,21 +239,40 @@
         </ul>
       </div>
     </div>
-  </div>
+  </div> *@
   <!--/ Total Earnings -->
 
   <!-- Four Cards -->
-  <div class="col-xl-4 col-md-6">
+  <div class="col-xl-4 col-md-12">
     <div class="row gy-6">
       <!-- Total Profit line chart -->
       <div class="col-sm-6">
         <div class="card h-100">
-          <div class="card-header pb-0">
-            <h4 class="mb-0">$86.4k</h4>
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <div class="avatar">
+              <div class="avatar-initial bg-info rounded-circle shadow-xs">
+                <i class="icon-base ri ri-pie-chart-2-line icon-24px"></i>
+              </div>
+            </div>
+            @* <div class="dropdown">
+              <button class="btn text-body-secondary p-0" type="button" id="totalProfitID" data-bs-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                <i class="icon-base ri ri-more-2-line icon-24px"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalProfitID">
+                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                <a class="dropdown-item" href="javascript:void(0);">Share</a>
+                <a class="dropdown-item" href="javascript:void(0);">Update</a>
+              </div>
+            </div> *@
           </div>
           <div class="card-body">
-            <div id="totalProfitLineChart" class="mb-3"></div>
-            <h6 class="text-center mb-0">Total Profit</h6>
+            <h6 class="mb-1">Total Scheduled</h6>
+            <div class="d-flex flex-wrap mb-1 align-items-center">
+              <h4 class="mb-0 me-2" id="totalScheduled">0</h4>
+              <p class="text-info mb-0" id="totalEntries">0 entries</p>
+            </div>
+            <small>Total Scheduled Batches</small>
           </div>
         </div>
       </div>
@@ -250,12 +282,13 @@
         <div class="card h-100">
           <div class="card-header d-flex align-items-center justify-content-between">
             <div class="avatar">
-              <div class="avatar-initial bg-secondary rounded-circle shadow-xs">
-                <i class="icon-base ri ri-pie-chart-2-line icon-24px"></i>
+              <div class="avatar-initial bg-success rounded-circle shadow-xs">
+                <i class="icon-base ri ri-checkbox-circle-line icon-24px"></i>
               </div>
             </div>
-            <div class="dropdown">
-              <button class="btn text-body-secondary p-0" type="button" id="totalProfitID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @* <div class="dropdown">
+              <button class="btn text-body-secondary p-0" type="button" id="totalProfitID" data-bs-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
                 <i class="icon-base ri ri-more-2-line icon-24px"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalProfitID">
@@ -263,15 +296,15 @@
                 <a class="dropdown-item" href="javascript:void(0);">Share</a>
                 <a class="dropdown-item" href="javascript:void(0);">Update</a>
               </div>
-            </div>
+            </div> *@
           </div>
           <div class="card-body">
-            <h6 class="mb-1">Total Profit</h6>
+            <h6 class="mb-1">Completed</h6>
             <div class="d-flex flex-wrap mb-1 align-items-center">
-              <h4 class="mb-0 me-2">$25.6k</h4>
-              <p class="text-success mb-0">+42%</p>
+              <h4 id="totalCompleted" class="mb-0 me-2">0</h4>
+              <p class="text-success mb-0" id="completedPercentage">0%</p>
             </div>
-            <small>Weekly Project</small>
+            <small>Total Entries Submitted</small>
           </div>
         </div>
       </div>
@@ -281,12 +314,13 @@
         <div class="card h-100">
           <div class="card-header d-flex align-items-center justify-content-between">
             <div class="avatar">
-              <div class="avatar-initial bg-primary rounded-circle shadow-xs">
-                <i class="icon-base ri ri-file-word-2-line icon-24px"></i>
+              <div class="avatar-initial bg-secondary rounded-circle shadow-xs">
+                <i class="icon-base ri ri-time-line icon-24px"></i>
               </div>
             </div>
-            <div class="dropdown">
-              <button class="btn text-body-secondary p-0" type="button" id="newProjectID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @* <div class="dropdown">
+              <button class="btn text-body-secondary p-0" type="button" id="newProjectID" data-bs-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
                 <i class="icon-base ri ri-more-2-line icon-24px"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="newProjectID">
@@ -294,15 +328,22 @@
                 <a class="dropdown-item" href="javascript:void(0);">Share</a>
                 <a class="dropdown-item" href="javascript:void(0);">Update</a>
               </div>
-            </div>
+            </div> *@
           </div>
           <div class="card-body">
-            <h6 class="mb-1">New Project</h6>
+            <h6 class="mb-1">Pending</h6>
+
             <div class="d-flex flex-wrap mb-1 align-items-center">
-              <h4 class="mb-0 me-2">862</h4>
-              <p class="text-danger mb-0">-18%</p>
+              <h4 id="totalPending" class="mb-0 me-2">0</h4>
+              <p class="text-secondary mb-0" id="pendingPercentage">0%</p>
             </div>
-            <small>Yearly Project</small>
+            <small>Total Pending Entries</small>
+            <div class="mt-2">
+              <small class="text-warning">
+                <i class="ri-refresh-line me-1"></i>
+                <span id="totalRetrying">0</span> retrying
+              </small>
+            </div>
           </div>
         </div>
       </div>
@@ -310,12 +351,31 @@
       <!-- Sessions chart -->
       <div class="col-sm-6">
         <div class="card h-100">
-          <div class="card-header pb-0">
-            <h4 class="mb-0">2,856</h4>
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <div class="avatar">
+              <div class="avatar-initial bg-danger rounded-circle shadow-xs">
+                <i class="icon-base ri ri-close-circle-line icon-24px"></i>
+              </div>
+            </div>
+            @* <div class="dropdown">
+              <button class="btn text-body-secondary p-0" type="button" id="totalProfitID" data-bs-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                <i class="icon-base ri ri-more-2-line icon-24px"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalProfitID">
+                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                <a class="dropdown-item" href="javascript:void(0);">Share</a>
+                <a class="dropdown-item" href="javascript:void(0);">Update</a>
+              </div>
+            </div> *@
           </div>
           <div class="card-body">
-            <div id="sessionsColumnChart" class="mb-3"></div>
-            <h6 class="text-center mb-0">Sessions</h6>
+            <h6 class="mb-1">Failed</h6>
+            <div class="d-flex flex-wrap mb-1 align-items-center">
+              <h4 id="totalFailed" class="mb-0 me-2">0</h4>
+              <p class="text-danger mb-0" id="failedPercentage">0%</p>
+            </div>
+            <small>Total Failed Entries</small>
           </div>
         </div>
       </div>
@@ -325,13 +385,14 @@
   <!--/ four cards -->
 
   <!-- Performance Chart -->
-  <div class="col-xl-4 col-md-6">
+  @* <div class="col-xl-4 col-md-6">
     <div class="card h-100">
       <div class="card-header">
         <div class="d-flex justify-content-between">
           <h5 class="mb-0">Performance</h5>
           <div class="dropdown">
-            <button class="btn text-body-secondary p-0" type="button" id="performanceDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn text-body-secondary p-0" type="button" id="performanceDropdown" data-bs-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
               <i class="icon-base ri ri-more-2-line icon-24px"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="performanceDropdown">
@@ -346,11 +407,11 @@
         <div id="performanceChart"></div>
       </div>
     </div>
-  </div>
+  </div> *@
   <!--/ Performance Chart -->
 
   <!-- Deposit / Withdraw -->
-  <div class="col-xl-8">
+  @* <div class="col-xl-8">
     <div class="card-group">
       <div class="card mb-0">
         <div class="card-body card-separator">
@@ -374,7 +435,8 @@
               </li>
               <li class="d-flex mb-4 align-items-center pb-2">
                 <div class="flex-shrink-0 me-4">
-                  <img src="~/img/icons/payments/mastercard-2.png" class="img-fluid" alt="mastercard" height="30" width="30" />
+                  <img src="~/img/icons/payments/mastercard-2.png" class="img-fluid" alt="mastercard" height="30"
+                       width="30" />
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
@@ -398,7 +460,8 @@
               </li>
               <li class="d-flex mb-4 align-items-center pb-2">
                 <div class="flex-shrink-0 me-4">
-                  <img src="~/img/icons/payments/american-bank.png" class="img-fluid" alt="american" height="30" width="30" />
+                  <img src="~/img/icons/payments/american-bank.png" class="img-fluid" alt="american" height="30"
+                       width="30" />
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
@@ -470,7 +533,8 @@
               </li>
               <li class="d-flex mb-4 align-items-center pb-2">
                 <div class="flex-shrink-0 me-4">
-                  <img src="~/img/icons/payments/digital-ocean.png" class="img-fluid" alt="digital" height="30" width="30" />
+                  <img src="~/img/icons/payments/digital-ocean.png" class="img-fluid" alt="digital" height="30"
+                       width="30" />
                 </div>
                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                   <div class="me-2">
@@ -497,16 +561,17 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> *@
   <!-- Deposit / Withdraw -->
 
   <!-- Sales by Countries -->
-  <div class="col-xl-4 col-md-6">
+  @* <div class="col-xl-4 col-md-6">
     <div class="card h-100">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title m-0 me-2">Sales by Countries</h5>
         <div class="dropdown">
-          <button class="btn text-body-secondary p-0" type="button" id="saleStatus" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button class="btn text-body-secondary p-0" type="button" id="saleStatus" data-bs-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
             <i class="icon-base ri ri-more-2-line icon-24px"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="saleStatus">
@@ -652,10 +717,10 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> *@
   <!--/ Sales by Countries -->
   <!-- Data Tables -->
-  <div class="col-xl-8 col-md-6">
+  <div class="col-xl-12 col-md-12">
     <div class="card overflow-hidden">
       <div class="table-responsive">
         <table class="table table-sm">

@@ -11,13 +11,6 @@
   <div class="@ViewData["containerNav"] d-flex h-100">
     @* ! Full version menu-items *@
     <ul class="menu-inner">
-
-      <li class='menu-item@(currentPage == "/Home/Generator" ? " active" : "")'>
-        <a asp-controller="Home" asp-action="Generator" class="menu-link">
-          <i class="menu-icon icon-base ri ri-computer-line"></i>
-          <div data-i18n="Generator">Generator</div>
-        </a>
-      </li>
       <!-- Dashboards -->
       <li class='menu-item@(currentPage.EndsWith("/") ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -56,6 +49,13 @@
             </a>
           </li>
         </ul>
+      </li>
+
+      <li class='menu-item@(currentPage == "/Home/Generator" ? " active" : "")'>
+        <a asp-controller="Home" asp-action="Generator" class="menu-link">
+          <i class="menu-icon icon-base ri ri-computer-line"></i>
+          <div data-i18n="Generator">Generator</div>
+        </a>
       </li>
 
       <!-- Layouts -->

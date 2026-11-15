@@ -5,6 +5,7 @@ using Regen.Models;
 using Regen.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using Regen.Models.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,13 +57,6 @@ builder.Services
                 throw new InvalidOperationException("Google authentication data is missing.");
             }
 
-            if (string.IsNullOrEmpty(googleId) ||
-                string.IsNullOrEmpty(email))
-            {
-                throw new Exception(
-                    "Google authentication data is missing.");
-            }
-
             var user = await db.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
             var now = DateTime.UtcNow;
 
@@ -98,6 +92,11 @@ builder.Services
                     "RegenUserId",
                     user.Id.ToString()
                 ));
+
+                identity.AddClaim(new Claim(
+                    ClaimTypes.Role,
+                    user.Role.ToString()
+                ));
             }
         };
     })
@@ -110,6 +109,25 @@ builder.Services
     });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<RegenContext>();
+    var adminEmail = builder.Configuration["Admin:Email"];
+
+    if (!string.IsNullOrWhiteSpace(adminEmail))
+    {
+        var admin = await db.Users.FirstOrDefaultAsync(
+            u => u.Email == adminEmail
+        );
+
+        if (admin != null && admin.Role != UserRole.Admin)
+        {
+            admin.Role = UserRole.Admin;
+            await db.SaveChangesAsync();
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
