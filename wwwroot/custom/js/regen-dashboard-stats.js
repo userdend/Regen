@@ -189,7 +189,7 @@ async function loadFailedBatches() {
             <td>
                 <a href="" class="text-primary retry-btn">
                     <i class="icon-base ri ri-refresh-line me-2"></i>
-                    Retry
+                    Retry Failed
                 </a>
             </td>
         `;
