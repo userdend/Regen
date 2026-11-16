@@ -29,7 +29,8 @@
             getOriginalUrl: "@Url.Action("GetGoogleFormOriginalUrl", "GoogleForm")",
             getFormContent: "@Url.Action("GetGoogleFormContent", "GoogleForm")",
             createFormSubmission: "@Url.Action("CreateGoogleSubmission", "GoogleForm")",
-            getSavedConfiguration: "@Url.Action("GetSavedConfiguration", "GoogleForm")"
+            getSavedConfiguration: "@Url.Action("GetSavedConfiguration", "GoogleForm")",
+            generateSyntheticResponse: "@Url.Action("GenerateSyntheticResponse", "GoogleForm")"
         };
     </script>
     <script src="~/js/forms-sliders.js"></script>
@@ -64,8 +65,9 @@
 
             <template id="prompt-template">
                 <div class="form-floating form-floating-outline">
-                    <textarea id="prompt" class="form-control" placeholder="Describe your request" style="height: 120px"></textarea>
-                    <label for="prompt">Prompt</label>
+                    <textarea id="prompt_input" class="form-control" placeholder="Describe your request"
+                              style="height: 120px"></textarea>
+                    <label for="prompt_input">Prompt</label>
                 </div>
             </template>
 

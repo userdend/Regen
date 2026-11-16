@@ -6,6 +6,7 @@ using Regen.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Regen.Models.Enums;
+using OpenAI.Responses;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,18 @@ builder.Services.AddHttpClient("NoRedirect", c =>
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Register services
+#pragma warning disable OPENAI001
+
+var apiKey = builder.Configuration["OpenAI:ApiKey"]
+    ?? throw new InvalidOperationException(
+        "OpenAI API key is missing."
+    );
+
+builder.Services.AddSingleton(
+    new ResponsesClient(apiKey)
+);
+
+builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<GoogleFormService>();
 
 // Add services to the container.

@@ -380,3 +380,23 @@ async function collectEntries() {
 
   return payload;
 }
+
+async function collectEntriesFromAi(dataFromAi) {
+  const urlHeader = prefillHead();
+  const urlBody = prefillBody();
+
+  entryCollection.splice(0, entryCollection.length);
+
+  for (const item of dataFromAi) {
+    entryCollection.push(`${urlHeader}${urlBody}${item}`);
+  }
+
+  const payload = {
+    intervalMilliseconds: parseInt(googleFormTimestamp.value, 10),
+    entries: entryCollection,
+    dataMap: null,
+    saveConfiguration: false
+  };
+
+  return payload;
+}

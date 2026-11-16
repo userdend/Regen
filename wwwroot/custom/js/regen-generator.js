@@ -36,6 +36,7 @@ $(function () {
   const googleFormDetailsDisplay = document.getElementById('google-form-details-display');
 
   let onProcessing = false;
+  let onUseAi = false;
 
   // Modern Vertical Wizard
   // --------------------------------------------------------------------
@@ -117,6 +118,7 @@ $(function () {
             });
           } finally {
             onProcessing = false;
+            onUseAi = false;
             wizardModernVerticalBtnManualNext.disabled = false;
             wizardModernVerticalBtnManualNext.innerHTML = defaultNextManualBtnTemplate.innerHTML;
           }
@@ -179,6 +181,7 @@ $(function () {
             });
           } finally {
             onProcessing = false;
+            onUseAi = true;
             wizardModernVerticalBtnAiNext.disabled = false;
             wizardModernVerticalBtnAiNext.innerHTML = defaultNextAiBtnTemplate.innerHTML;
           }
@@ -257,6 +260,7 @@ $(function () {
             });
           } finally {
             onProcessing = false;
+            onUseAi = false;
             wizardModernVerticalBtnLoadConfigNext.disabled = false;
             wizardModernVerticalBtnLoadConfigNext.innerHTML = defaultNextLoadConfigBtnTemplate.innerHTML;
           }
@@ -288,10 +292,37 @@ $(function () {
         const submitButton = event.currentTarget;
 
         try {
+          let data = null;
+
+          if (onUseAi) {
+            // Add key to .env first.
+            const promptInput = document.getElementById('prompt-input').value;
+            const googleFormRespondent = document.getElementById('google-form-respondent').value;
+            const response = await fetch(window.appUrls.generateSyntheticResponse, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                RequestVerificationToken: document.querySelector('input[name="__RequestVerificationToken"]').value
+              },
+              body: JSON.stringify({
+                questions: messagePrompt,
+                prompt: promptInput,
+                count: googleFormRespondent
+              })
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to generate responses.');
+            }
+
+            const dataFromAi = await response.json();
+            data = await collectEntriesFromAi(dataFromAi);
+          }
+
           submitButton.disabled = true;
           submitButton.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
 
-          const data = await collectEntries();
+          data ??= await collectEntries();
           const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
           const request = await fetch(window.appUrls.createFormSubmission, {
             method: 'POST',
@@ -308,7 +339,7 @@ $(function () {
           }
 
           // Parse the response JSON.
-          const response = await request.json();
+          // const response = await request.json();
 
           Swal.fire({
             icon: 'success',

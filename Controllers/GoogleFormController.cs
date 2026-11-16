@@ -13,6 +13,7 @@ namespace Regen.Controllers;
 
 [Authorize]
 public class GoogleFormController(
+    OpenAIService openAIService,
     RegenContext db,
     GoogleFormService googleFormService,
     IHttpClientFactory httpClientFactory,
@@ -194,5 +195,41 @@ public class GoogleFormController(
             .FirstOrDefaultAsync();
 
         return savedConfiguration is null ? NotFound() : Ok(savedConfiguration);
+    }
+
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> GenerateSyntheticResponse(
+       [FromBody] GenerateSyntheticRequest request,
+       CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid ||
+            request.Questions == null ||
+            request.Questions.Count == 0)
+        {
+            return BadRequest(new
+            {
+                error = "Invalid request data."
+            });
+        }
+
+        try
+        {
+            var respondents =
+                await openAIService.GenerateSyntheticResponseAsync(
+                    request,
+                    cancellationToken
+                );
+
+            return Ok(new { respondents });
+        }
+        catch (OperationCanceledException)
+            when (cancellationToken.IsCancellationRequested)
+        {
+            return new StatusCodeResult(499);
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException("Unable to generate synthetic responses.");
+        }
     }
 }
