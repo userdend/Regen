@@ -207,3 +207,13 @@ Procfile          text
 
 # Ignore files (like .npmignore or .gitignore)
 *.*ignore         text
+
+# Exclude third-party frontend assets from language statistics
+wwwroot/assets/** linguist-vendored
+
+# Exclude generated files
+bin/** linguist-generated
+obj/** linguist-generated
+
+# Exclude dependencies
+node_modules/** linguist-vendored

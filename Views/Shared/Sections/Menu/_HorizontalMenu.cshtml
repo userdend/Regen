@@ -86,6 +86,13 @@
         </a>
       </li>
 
+      <li class='menu-item@(currentPage == "/Pages/FAQ" ? " active" : "")'>
+        <a asp-controller="Pages" asp-action="FAQ" class="menu-link">
+          <i class="menu-icon icon-base ri ri-question-line"></i>
+          <div data-i18n="Help Center">Help Center</div>
+        </a>
+      </li>
+
       <!-- Layouts -->
       <li class='menu-item@(currentPage.StartsWith("/LayoutExamples") ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
