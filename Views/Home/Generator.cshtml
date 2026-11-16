@@ -36,6 +36,7 @@
     <script src="~/custom/js/regen-store.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-collect-entries.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-build-form.js" asp-append-version="true"></script>
+    <script src="~/custom/js/regen-build-form-ai.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-get-original-url.js" asp-append-version="true"></script>
     <script src="~/custom/js/regen-generator.js" asp-append-version="true"></script>
     <script src="~/js/form-wizard-validation.js"></script>
@@ -63,8 +64,8 @@
 
             <template id="prompt-template">
                 <div class="form-floating form-floating-outline">
-                    <input type="text" id="first-name-modern-vertical" class="form-control" placeholder="Describe your request" />
-                    <label for="first-name-modern-vertical">Prompt</label>
+                    <textarea id="prompt" class="form-control" placeholder="Describe your request" style="height: 120px"></textarea>
+                    <label for="prompt">Prompt</label>
                 </div>
             </template>
 

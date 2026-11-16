@@ -36,7 +36,6 @@ $(function () {
   const googleFormDetailsDisplay = document.getElementById('google-form-details-display');
 
   let onProcessing = false;
-  let onManual = true;
 
   // Modern Vertical Wizard
   // --------------------------------------------------------------------
@@ -84,7 +83,6 @@ $(function () {
 
           try {
             onProcessing = true;
-            onManual = true;
             wizardModernVerticalBtnManualNext.disabled = true;
             wizardModernVerticalBtnManualNext.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
 
@@ -119,7 +117,6 @@ $(function () {
             });
           } finally {
             onProcessing = false;
-            onManual = true;
             wizardModernVerticalBtnManualNext.disabled = false;
             wizardModernVerticalBtnManualNext.innerHTML = defaultNextManualBtnTemplate.innerHTML;
           }
@@ -133,7 +130,58 @@ $(function () {
           if (onProcessing) {
             return;
           }
-          modernVerticalStepper.next();
+
+          // Check if the input is empty.
+          if (googleFormUrlInput.value.trim() === '' || !URL.canParse(googleFormUrlInput.value)) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Warning!',
+              text: 'Please enter a valid Google Form URL.',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#ff9800'
+            });
+            return;
+          }
+
+          try {
+            onProcessing = true;
+            wizardModernVerticalBtnAiNext.disabled = true;
+            wizardModernVerticalBtnAiNext.innerHTML = defaultLoadingDisplayBtnTemplate.innerHTML;
+
+            const url = await getOriginalUrl(googleFormUrlInput.value);
+            localStorage.setItem('form-original-url', url);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const response = await fetch(window.appUrls.getFormContent, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                RequestVerificationToken: token
+              },
+              body: JSON.stringify({ url })
+            });
+
+            if (!response.ok) {
+              throw new Error(`Network response is not ok: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            googleFormDetailsDisplay.innerHTML = '';
+            configureUiForAi(data, googleFormDetailsDisplay);
+            modernVerticalStepper.next();
+          } catch (error) {
+            console.error(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error!',
+              text: 'Something went wrong. Please try again.',
+              confirmButtonText: 'OK',
+              confirmButtonColor: '#d33'
+            });
+          } finally {
+            onProcessing = false;
+            wizardModernVerticalBtnAiNext.disabled = false;
+            wizardModernVerticalBtnAiNext.innerHTML = defaultNextAiBtnTemplate.innerHTML;
+          }
         });
       });
     }
