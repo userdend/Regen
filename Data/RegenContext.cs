@@ -94,5 +94,13 @@ public class RegenContext : DbContext
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
+
+        modelBuilder.Entity<FreeCreditClaim>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasIndex(e => e.GoogleIdHash)
+                .IsUnique();
+        });
     }
 }

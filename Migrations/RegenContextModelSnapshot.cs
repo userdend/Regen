@@ -76,6 +76,9 @@ namespace Regen.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GoogleIdHash")
+                        .IsUnique();
+
                     b.ToTable("FreeCreditClaims");
                 });
 

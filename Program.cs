@@ -150,6 +150,16 @@ builder.Services
                 await db.SaveChangesAsync();
             }
 
+            var adminGoogleId = builder.Configuration["Admin:GoogleId"];
+
+            if (!string.IsNullOrWhiteSpace(adminGoogleId) &&
+                googleId == adminGoogleId &&
+                user.Role != UserRole.Admin)
+            {
+                user.Role = UserRole.Admin;
+                await db.SaveChangesAsync();
+            }
+
             if (context.Principal?.Identity is ClaimsIdentity identity)
             {
                 identity.AddClaim(new Claim(
@@ -173,25 +183,6 @@ builder.Services
     });
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<RegenContext>();
-    var adminEmail = builder.Configuration["Admin:Email"];
-
-    if (!string.IsNullOrWhiteSpace(adminEmail))
-    {
-        var admin = await db.Users.FirstOrDefaultAsync(
-            u => u.Email == adminEmail
-        );
-
-        if (admin != null && admin.Role != UserRole.Admin)
-        {
-            admin.Role = UserRole.Admin;
-            await db.SaveChangesAsync();
-        }
-    }
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

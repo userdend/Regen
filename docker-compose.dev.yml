@@ -10,7 +10,7 @@ services:
       DOTNET_USE_POLLING_FILE_WATCHER: 'true'
       Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
       Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
-      Admin__Email: ${ADMIN_EMAIL}
+      Admin__GoogleId: ${ADMIN_GOOGLE_ID}
       OpenAI__ApiKey: ${OPENAI_APIKEY}
       Security__CreditClaimKey: ${CREDIT_CLAIM_KEY}
       PATH: /root/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
