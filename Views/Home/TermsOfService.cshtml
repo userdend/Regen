@@ -1,0 +1,243 @@
+@{
+    ViewData["Title"] = "Terms of Service";
+}
+
+@section PageStyles {
+    <style>
+        .terms-service-card {
+            margin: 0 auto;
+        }
+
+        .terms-service-header {
+            background: linear-gradient(135deg, rgba(var(--bs-primary-rgb), 0.12), rgba(var(--bs-info-rgb), 0.08));
+            border-bottom: 1px solid var(--bs-border-color);
+        }
+
+        .terms-service-content {
+            color: var(--bs-body-color);
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+
+        .terms-service-content h2 {
+            color: var(--bs-heading-color);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 2rem 0 0.75rem;
+        }
+
+        .terms-service-content h2:first-child {
+            margin-top: 0;
+        }
+
+        .terms-service-content p {
+            margin-bottom: 1rem;
+        }
+
+        .terms-service-content ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .terms-service-content li {
+            margin-bottom: 0.35rem;
+            padding-left: 0.25rem;
+        }
+
+        .terms-service-callout {
+            background-color: var(--bs-tertiary-bg);
+            border-left: 3px solid var(--bs-primary);
+        }
+
+        .terms-service-callout p:last-child {
+            margin-bottom: 0;
+        }
+
+        @@media (max-width: 575.98px) {
+
+            .terms-service-header,
+            .terms-service-content {
+                padding: 1.25rem !important;
+            }
+        }
+    </style>
+}
+
+<div class="row g-6 justify-content-center">
+    <div class="col-12 col-xl-10 col-xxl-9">
+        <article class="card terms-service-card overflow-hidden">
+            <header class="terms-service-header card-body p-6">
+                <div class="d-flex align-items-start gap-3">
+                    <div class="avatar avatar-md flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-primary">
+                            <i class="icon-base ri ri-file-text-line icon-24px"></i>
+                        </span>
+                    </div>
+                    <div>
+                        <h1 class="mb-2">Terms of Service</h1>
+                        <div class="d-flex flex-wrap gap-2 text-body-secondary">
+                            <span><strong>Effective Date:</strong> November 19, 2026</span>
+                            <span><strong>Last Updated:</strong> November 19, 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="terms-service-content card-body p-6">
+                <p>Welcome to <strong>Regen</strong>. By accessing or using our platform, you agree to these Terms of
+                    Service.</p>
+
+                    <p>Please read these terms carefully before using our services.</p>
+
+                    <h2>1. Purpose of the Service</h2>
+                    <p>Regen is a software platform designed to generate synthetic responses for testing, development,
+                        demonstration, and simulation purposes.</p>
+
+                        <p>Synthetic responses are artificially generated data and do not represent actual human participants,
+                            opinions, experiences, or research findings.</p>
+
+                            <div class="terms-service-callout rounded p-4 mb-4">
+                                <p><strong>Our service is intended strictly for testing and simulation purposes.</strong></p>
+                                <p>It must not be used to misrepresent synthetic responses as genuine research participation.</p>
+                            </div>
+
+                            <h2>2. Acceptable Use</h2>
+                            <p>By using Regen, you agree to:</p>
+                            <ul>
+                                <li>Use the platform only on forms that you own, manage, or have explicit authorization to test.
+                                </li>
+                                <li>Use synthetic responses for legitimate testing, development, or simulation.</li>
+                                <li>Respect the rights, privacy, and research integrity of others.</li>
+                                <li>Avoid submitting synthetic responses to live research surveys or production forms without
+                                    appropriate authorization.</li>
+                                    <li>Comply with all applicable laws and third-party platform policies.</li>
+                                </ul>
+                                <p>You must not use Regen to manipulate research results, fabricate academic evidence, interfere with
+                                    legitimate data collection, or intentionally disrupt third-party services.</p>
+
+                                    <h2>3. Responsibility for Form Submissions</h2>
+                                    <p><strong>You are solely responsible for selecting the forms to which synthetic responses are
+                                        submitted.</strong></p>
+
+                                        <p>Before using Regen, ensure that the target form is intended for testing and that you have permission
+                                            to submit artificial responses.</p>
+
+                                            <p>Submitting synthetic responses to legitimate research forms may compromise research integrity,
+                                                distort collected data, or cause financial, academic, or operational harm.</p>
+
+                                                <p>Regen does not authorize or encourage such activities.</p>
+
+                                                <p>To the extent permitted by applicable law, Regen is not responsible for damage resulting from
+                                                    unauthorized or improper use of the platform.</p>
+
+                                                    <p>You acknowledge that using the service on forms without appropriate authorization is at your own
+                                                        risk.</p>
+
+                                                        <h2>4. Credit System</h2>
+                                                        <p>Regen operates using a credit-based system.</p>
+
+                                                        <p>Credits may be purchased or granted through promotions and are used to access designated platform
+                                                            features.</p>
+
+                                                            <p>The number of credits required for each operation will be displayed or otherwise communicated through
+                                                                the platform.</p>
+
+                                                                <p>Credits:</p>
+                                                                <ul>
+                                                                    <li>Have no monetary value outside Regen.</li>
+                                                                    <li>Cannot be exchanged for cash.</li>
+                                                                    <li>Cannot be transferred between accounts unless expressly permitted.</li>
+                                                                    <li>May be subject to reasonable usage limitations to prevent abuse.</li>
+                                                                </ul>
+                                                                <p>We reserve the right to modify credit pricing and consumption rates for future transactions, with
+                                                                    appropriate notice where required.</p>
+
+                                                                    <h2>5. Refund Policy</h2>
+                                                                    <p><strong>Refunds are provided exclusively in the form of platform credits, except where monetary
+                                                                        refunds are required by applicable law.</strong></p>
+
+                                                                        <p>We do not ordinarily provide refunds to the original payment method.</p>
+
+                                                                        <p>Credit refunds may be considered in circumstances such as:</p>
+                                                                        <ul>
+                                                                            <li>A confirmed technical failure that prevented a paid operation from being completed.</li>
+                                                                            <li>An incorrect credit deduction caused by a platform error.</li>
+                                                                            <li>A duplicate deduction for the same operation.</li>
+                                                                        </ul>
+                                                                        <p>Refund requests may be reviewed individually.</p>
+
+                                                                        <p>We reserve the right to decline credit refund requests involving unauthorized use, intentional
+                                                                            misuse, or operations successfully completed according to their intended functionality.</p>
+               
+                                                                            <h2>6. Service Availability</h2>
+                                                                            <p>We aim to provide a reliable service but do not guarantee uninterrupted or error-free operation.</p>
+
+                                                                            <p>The platform may experience temporary interruptions due to maintenance, infrastructure issues,
+                                                                                third-party limitations, or unexpected technical failures.</p>
+
+                                                                                <p>We may modify, suspend, or discontinue features when reasonably necessary for operational, security,
+                                                                                    or legal reasons.</p>
+
+                                                                                    <h2>7. Third-Party Platforms</h2>
+                                                                                    <p>Regen may interact with external form providers and other third-party services.</p>
+
+                                                                                    <p>We are not affiliated with or endorsed by these providers unless explicitly stated.</p>
+
+                                                                                    <p>Users are responsible for ensuring their activities comply with the terms and policies of the
+                                                                                        third-party services they access.</p>
+
+                                                                                        <p>We do not guarantee that every third-party form or platform will remain compatible with Regen.</p>
+
+                                                                                        <h2>8. Disclaimer of Warranties</h2>
+                                                                                        <p>The service is provided on an <strong>"as is" and "as available"</strong> basis, to the extent
+                                                                                            permitted by applicable law.</p>
+
+                                                                                            <p>We make no guarantee regarding the accuracy, suitability, reliability, or fitness of synthetic
+                                                                                                responses for any particular purpose.</p>
+
+                                                                                                <p>Synthetic responses must not be treated as genuine participant data or valid empirical research
+                                                                                                    evidence.</p>
+
+                                                                                                    <h2>9. Limitation of Liability</h2>
+                                                                                                    <p>To the maximum extent permitted by applicable law, Regen and its operators shall not be liable for
+                                                                                                        indirect, incidental, consequential, or special damages arising from the use or misuse of the
+                                                                                                        platform.</p>
+
+                                                                                                        <p>This includes, without limitation:</p>
+                                                                                                        <ul>
+                                                                                                            <li>Corruption or contamination of research datasets.</li>
+                                                                                                            <li>Unauthorized submissions to third-party forms.</li>
+                                                                                                            <li>Academic or professional consequences arising from fabricated responses.</li>
+                                                                                                            <li>Loss of business opportunities, revenue, or data.</li>
+                                                                                                            <li>Service interruptions or third-party platform restrictions.</li>
+                                                                                                        </ul>
+                                                                                                        <p>Nothing in these terms excludes liability that cannot legally be excluded.</p>
+
+                                                                                                        <h2>10. Suspension and Termination</h2>
+                                                                                                        <p>We reserve the right to suspend or terminate accounts that violate these terms, abuse platform
+                                                                                                            resources, or use the service to harm third parties.</p>
+
+                                                                                                            <p>Where reasonably appropriate, we may provide notice before taking action.</p>
+
+                                                                                                            <p>Serious violations may result in immediate suspension.</p>
+
+                                                                                                            <h2>11. Changes to These Terms</h2>
+                                                                                                            <p>We may revise these Terms of Service to reflect changes in our platform, business operations, or
+                                                                                                                legal requirements.</p>
+
+                                                                                                                <p>Updated terms will be published with a revised effective date.</p>
+
+                                                                                                                <p>Continued use of the service after revised terms become effective constitutes acceptance of those
+                                                                                                                    terms.</p>
+
+                                                                                                                    <h2>12. Contact Information</h2>
+                                                                                                                    <p>For questions, support requests, or credit refund inquiries, contact:</p>
+
+                                                                                                                    <div class="terms-service-callout rounded p-4">
+                                                                                                                        <p><strong>Email:</strong> boydbayndend99@gmail.com</p>
+                                                                                                                        <p><strong>Platform:</strong> Regen</p>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </article>
+                                                                                                        </div>
+                                                                                                    </div>

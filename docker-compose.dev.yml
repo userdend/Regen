@@ -11,6 +11,7 @@ services:
       Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
       Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
       Admin__Email: ${ADMIN_EMAIL}
+      OpenAI__ApiKey: ${OPENAI_APIKEY}
       PATH: /root/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - .:/Regen

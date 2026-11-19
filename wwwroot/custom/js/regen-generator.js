@@ -295,7 +295,6 @@ $(function () {
           let data = null;
 
           if (onUseAi) {
-            // Add key to .env first.
             const promptInput = document.getElementById('prompt-input').value;
             const googleFormRespondent = document.getElementById('google-form-respondent').value;
             const response = await fetch(window.appUrls.generateSyntheticResponse, {

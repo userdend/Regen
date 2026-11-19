@@ -8,6 +8,7 @@ using Regen.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.ClientModel;
 
 namespace Regen.Controllers;
 
@@ -227,9 +228,38 @@ public class GoogleFormController(
         {
             return new StatusCodeResult(499);
         }
-        catch (Exception)
+        catch (ClientResultException ex)
+        when (ex.Status == 429 &&
+              ex.Message.Contains("insufficient_quota"))
         {
-            throw new InvalidOperationException("Unable to generate synthetic responses.");
+            logger.LogError(ex, "OpenAI API quota exhausted.");
+
+            return StatusCode(503, new
+            {
+                error = "AI generation is temporarily unavailable. Please try again later.",
+                code = "AI_SERVICE_UNAVAILABLE"
+            });
+        }
+        catch (ClientResultException ex)
+            when (ex.Status == 429)
+        {
+            logger.LogWarning(ex, "OpenAI rate limit exceeded.");
+
+            return StatusCode(429, new
+            {
+                error = "The AI service is currently busy. Please try again shortly.",
+                code = "AI_RATE_LIMITED"
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to generate synthetic responses.");
+
+            return StatusCode(500, new
+            {
+                error = "Something went wrong while generating responses. Please try again.",
+                code = "AI_GENERATION_FAILED"
+            });
         }
     }
 }
