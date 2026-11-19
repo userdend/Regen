@@ -107,10 +107,7 @@ public class ScheduleWorker(
 
             await ProcessEntry(db, entry, ct);
 
-            logger.LogInformation(
-                "Entry {EntryId} completed.",
-                entry.Id
-            );
+            logger.LogInformation("Entry processing attempt finished.");
         }
         catch (OperationCanceledException)
             when (ct.IsCancellationRequested)

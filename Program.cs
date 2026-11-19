@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Regen.Models.Enums;
 using OpenAI.Responses;
+using System.Security.Cryptography;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,12 +40,14 @@ builder.Services.AddSingleton(
 
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<GoogleFormService>();
+builder.Services.AddScoped<CreditService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Register the background service
 builder.Services.AddHostedService<ScheduleWorker>();
+builder.Services.AddHostedService<CreditRefundWorker>();
 
 builder.Services
     .AddAuthentication(options =>
@@ -67,26 +71,72 @@ builder.Services
 
             if (string.IsNullOrWhiteSpace(googleId) || string.IsNullOrWhiteSpace(email))
             {
-                throw new InvalidOperationException("Google authentication data is missing.");
+                throw new InvalidOperationException(
+                    "Google authentication data is missing.");
             }
+
+            // Generate a stable, keyed identifier.
+            var key = Convert.FromBase64String(
+                builder.Configuration["Security:CreditClaimKey"]
+                ?? throw new InvalidOperationException(
+                    "Credit claim key is missing."));
+
+            var googleIdHash = Convert.ToHexString(
+                HMACSHA256.HashData(
+                    key,
+                    Encoding.UTF8.GetBytes(googleId)
+                )
+            );
 
             var user = await db.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
             var now = DateTime.UtcNow;
 
             if (user == null)
             {
+                const int freeCredits = 30;
+
+                await using var transaction =
+                    await db.Database.BeginTransactionAsync();
+
+                // Atomic claim prevents duplicate promotional grants.
+                var claimed = await db.Database.ExecuteSqlInterpolatedAsync($"""
+                    INSERT INTO "FreeCreditClaims"
+                        ("Id", "GoogleIdHash", "ClaimedAt")
+                    VALUES
+                        ({Guid.NewGuid()}, {googleIdHash}, {now})
+                    ON CONFLICT ("GoogleIdHash") DO NOTHING
+                    """);
+
                 user = new User
                 {
                     GoogleId = googleId,
                     Email = email,
                     Name = name ?? email,
                     AvatarUrl = avatar,
+                    Credit = claimed > 0 ? freeCredits : 0,
                     CreatedAt = now,
                     UpdatedAt = now,
                     LastLoginAt = now
                 };
 
                 db.Users.Add(user);
+
+                await db.SaveChangesAsync();
+
+                if (claimed > 0)
+                {
+                    db.CreditTransactions.Add(new CreditTransaction
+                    {
+                        UserId = user.Id,
+                        Amount = freeCredits,
+                        Type = "promotion",
+                        OperationKey = $"welcome:{googleIdHash}"
+                    });
+
+                    await db.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
             }
             else
             {
@@ -95,9 +145,9 @@ builder.Services
                 user.AvatarUrl = avatar;
                 user.UpdatedAt = now;
                 user.LastLoginAt = now;
-            }
 
-            await db.SaveChangesAsync();
+                await db.SaveChangesAsync();
+            }
 
             if (context.Principal?.Identity is ClaimsIdentity identity)
             {

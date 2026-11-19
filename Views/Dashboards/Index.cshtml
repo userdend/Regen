@@ -25,6 +25,26 @@
 }
 
 @* ************** Content ************** *@
+<template id="failedBatchRowTemplate">
+  <tr>
+    <td class="text-truncate batch-id"></td>
+    <td class="batch-created"></td>
+    <td class="batch-total"></td>
+    <td>
+      <span class="badge bg-label-success rounded-pill batch-completed"></span>
+    </td>
+    <td>
+      <span class="badge bg-label-danger rounded-pill batch-failed"></span>
+    </td>
+    <td>
+      <button type="button" class="retry-btn text-primary border-0 bg-transparent p-0">
+        <i class="icon-base ri ri-refresh-line me-1"></i>
+        Retry Failed
+      </button>
+    </td>
+  </tr>
+</template>
+
 <div class="row gy-6">
   <!-- Congratulations card -->
   @* <div class="col-md-12 col-lg-4">

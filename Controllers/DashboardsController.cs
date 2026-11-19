@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Regen.Data;
+using Regen.Services;
 
 namespace Regen.Controllers;
 
 [Authorize]
-public class DashboardsController(RegenContext db) : Controller
+public class DashboardsController(RegenContext db, CreditService creditService) : Controller
 {
   public IActionResult Index() => View();
   public IActionResult CRM() => View();
@@ -158,73 +159,44 @@ public class DashboardsController(RegenContext db) : Controller
 
   [HttpPost]
   [ValidateAntiForgeryToken]
-  public async Task<IActionResult> RetryBatch(Guid batchId)
+  public async Task<IActionResult> RetryBatch(
+    Guid batchId,
+    CancellationToken ct)
   {
     var userId = Guid.Parse(
         User.FindFirst("RegenUserId")!.Value
     );
 
-    await using var transaction = await db.Database.BeginTransactionAsync();
-
-    // Lock the batch until this transaction completes.
-    var batch = await db.ScheduledBatches
-        .FromSqlInterpolated($"""
-            SELECT *
-            FROM "ScheduledBatches"
-            WHERE "Id" = {batchId}
-              AND "UserId" = {userId}
-            FOR UPDATE
-            """)
-        .SingleOrDefaultAsync();
-
-    if (batch == null)
+    try
     {
-      return NotFound(new
+      var updatedCount =
+          await creditService.RetryFailedEntriesAsync(
+              batchId,
+              userId,
+              ct
+          );
+
+      if (updatedCount == 0)
       {
-        message = "Batch not found."
+        return Conflict(new
+        {
+          message = "No failed entries available for retry."
+        });
+      }
+
+      return Ok(new
+      {
+        message = "Batch queued for retry.",
+        batchId,
+        retriedEntries = updatedCount
       });
     }
-
-    var hasPending = await db.ScheduledEntries
-        .AnyAsync(e =>
-            e.BatchId == batchId &&
-            e.Status == "pending");
-
-    if (hasPending)
+    catch (InvalidOperationException ex)
     {
-      return Conflict(new
+      return BadRequest(new
       {
-        message = "Batch still contains pending entries."
+        message = ex.Message
       });
     }
-
-    var now = DateTime.UtcNow;
-
-    var updatedCount = await db.ScheduledEntries
-        .Where(e => e.BatchId == batchId)
-        .Where(e => e.Status == "failed")
-        .ExecuteUpdateAsync(setters => setters
-            .SetProperty(e => e.Status, "pending")
-            .SetProperty(e => e.ScheduledAt, now)
-            .SetProperty(e => e.ProcessedAt, (DateTime?)null)
-            .SetProperty(e => e.LastError, (string?)null)
-        );
-
-    if (updatedCount == 0)
-    {
-      return Conflict(new
-      {
-        message = "No failed entries available for retry."
-      });
-    }
-
-    await transaction.CommitAsync();
-
-    return Ok(new
-    {
-      message = "Batch queued for retry.",
-      batchId,
-      retriedEntries = updatedCount
-    });
   }
 }

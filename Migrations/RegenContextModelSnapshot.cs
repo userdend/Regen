@@ -22,6 +22,63 @@ namespace Regen.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Regen.Models.CreditTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("BatchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("EntryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("OperationKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OperationKey")
+                        .IsUnique();
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("CreditTransactions");
+                });
+
+            modelBuilder.Entity("Regen.Models.FreeCreditClaim", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ClaimedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("GoogleIdHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FreeCreditClaims");
+                });
+
             modelBuilder.Entity("Regen.Models.SavedConfiguration", b =>
                 {
                     b.Property<Guid>("Id")
@@ -90,6 +147,12 @@ namespace Regen.Migrations
 
                     b.Property<Guid>("BatchId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("ChargeCycle")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CreditStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("LastError")
                         .HasColumnType("text");
@@ -180,6 +243,15 @@ namespace Regen.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Regen.Models.CreditTransaction", b =>
+                {
+                    b.HasOne("Regen.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Regen.Models.SavedConfiguration", b =>

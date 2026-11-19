@@ -12,6 +12,7 @@ services:
       Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
       Admin__Email: ${ADMIN_EMAIL}
       OpenAI__ApiKey: ${OPENAI_APIKEY}
+      Security__CreditClaimKey: ${CREDIT_CLAIM_KEY}
       PATH: /root/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - .:/Regen

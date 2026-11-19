@@ -1,5 +1,7 @@
 namespace Regen.Models;
 
+using Regen.Models.Enums;
+
 public class ScheduledEntry
 {
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -24,4 +26,7 @@ public class ScheduledEntry
     public DateTime? NextRetryAt { get; set; }
 
     public int? LastHttpStatusCode { get; set; }
+
+    public CreditStatus CreditStatus { get; set; } = CreditStatus.Charged;
+    public int ChargeCycle { get; set; } = 0;
 }

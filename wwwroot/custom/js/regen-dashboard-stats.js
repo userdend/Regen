@@ -169,32 +169,20 @@ async function loadFailedBatches() {
     return;
   }
 
+  const template = document.getElementById('failedBatchRowTemplate');
+
   batches.forEach(batch => {
-    const row = document.createElement('tr');
+    const row = template.content.firstElementChild.cloneNode(true);
 
-    row.innerHTML = `
-            <td class="text-truncate">${batch.id.substring(0, 8)}</td>
-            <td>${new Date(batch.createdAt).toLocaleString()}</td>
-            <td>${batch.totalEntries}</td>
-            <td>
-                <span class="badge bg-label-success rounded-pill">
-                    ${batch.completedEntries}
-                </span>
-            </td>
-            <td>
-                <span class="badge bg-label-danger rounded-pill">
-                    ${batch.failedEntries}
-                </span>
-            </td>
-            <td>
-                <a href="" class="text-primary retry-btn">
-                    <i class="icon-base ri ri-refresh-line me-2"></i>
-                    Retry Failed
-                </a>
-            </td>
-        `;
+    row.querySelector('.batch-id').textContent = batch.id.substring(0, 8);
+    row.querySelector('.batch-created').textContent = new Date(batch.createdAt).toLocaleString();
+    row.querySelector('.batch-total').textContent = batch.totalEntries;
+    row.querySelector('.batch-completed').textContent = batch.completedEntries;
+    row.querySelector('.batch-failed').textContent = batch.failedEntries;
 
-    row.querySelector('.retry-btn').addEventListener('click', () => retryBatch(batch.id));
+    row.querySelector('.retry-btn').addEventListener('click', () => {
+      retryBatch(batch.id);
+    });
 
     tbody.appendChild(row);
   });
@@ -203,25 +191,38 @@ async function loadFailedBatches() {
 async function retryBatch(batchId) {
   const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-  const response = await fetch(`${window.appUrls.retryFailedBatches}?batchId=${encodeURIComponent(batchId)}`, {
-    method: 'POST',
-    headers: {
-      RequestVerificationToken: token
-    }
-  });
+  try {
+    const response = await fetch(`${window.appUrls.retryFailedBatches}?batchId=${encodeURIComponent(batchId)}`, {
+      method: 'POST',
+      headers: {
+        RequestVerificationToken: token
+      }
+    });
 
-  if (!response.ok) {
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Something went wrong.');
+    }
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: data.message,
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+    await loadFailedBatches();
+    await loadDashboardStats();
+  } catch (error) {
     Swal.fire({
       icon: 'error',
       title: 'Error!',
-      text: 'Something went wrong. Please try again.',
-      confirmButtonText: 'OK',
-      confirmButtonColor: '#d33'
+      text: error.message,
+      confirmButtonText: 'OK'
     });
-    return;
   }
-
-  await loadFailedBatches();
 }
 
 async function initializeDashboard() {

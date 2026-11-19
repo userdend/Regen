@@ -2,22 +2,22 @@
   ViewData["Title"] = "Account settings - Account";
 }
 
-@section VendorStyles{
-<link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
-<link rel="stylesheet" href="~/vendor/libs/tagify/tagify.css" />
-<link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.css" />
-<link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css" />
-<link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.css" />
+@section VendorStyles {
+  <link rel="stylesheet" href="~/vendor/libs/select2/select2.css" />
+  <link rel="stylesheet" href="~/vendor/libs/tagify/tagify.css" />
+  <link rel="stylesheet" href="~/vendor/libs/&#64;form-validation/form-validation.css" />
+  <link rel="stylesheet" href="~/vendor/libs/animate-css/animate.css" />
+  <link rel="stylesheet" href="~/vendor/libs/sweetalert2/sweetalert2.css" />
 }
 
 @section VendorScripts {
-<script src="~/vendor/libs/select2/select2.js"></script>
-<script src="~/vendor/libs/tagify/tagify.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/popular.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/bootstrap5.js"></script>
-<script src="~/vendor/libs/&#64;form-validation/auto-focus.js"></script>
-<script src="~/vendor/libs/cleave-zen/cleave-zen.js"></script>
-<script src="~/vendor/libs/sweetalert2/sweetalert2.js"></script>
+  <script src="~/vendor/libs/select2/select2.js"></script>
+  <script src="~/vendor/libs/tagify/tagify.js"></script>
+  <script src="~/vendor/libs/&#64;form-validation/popular.js"></script>
+  <script src="~/vendor/libs/&#64;form-validation/bootstrap5.js"></script>
+  <script src="~/vendor/libs/&#64;form-validation/auto-focus.js"></script>
+  <script src="~/vendor/libs/cleave-zen/cleave-zen.js"></script>
+  <script src="~/vendor/libs/sweetalert2/sweetalert2.js"></script>
 }
 
 @section PageScripts {
@@ -30,23 +30,28 @@
     <div class="nav-align-top">
       <ul class="nav nav-pills flex-column flex-md-row mb-6 gap-2 gap-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" href="javascript:void(0);"><i class="icon-base ri ri-group-line icon-sm me-1_5"></i>Account</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="AccountSettingsSecurity"><i class="icon-base ri ri-lock-line icon-sm me-1_5"></i>Security</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="AccountSettingsBilling"><i class="icon-base ri ri-bookmark-line icon-sm me-1_5"></i>Billing & Plans</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="AccountSettingsNotifications"><i class="icon-base ri ri-notification-4-line icon-sm me-1_5"></i>Notifications</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="AccountSettingsConnections"><i class="icon-base ri ri-link-m icon-sm me-1_5"></i>Connections</a>
-        </li>
-      </ul>
-    </div>
-    <div class="card mb-6">
+          <a class="nav-link active" href="javascript:void(0);"><i
+            class="icon-base ri ri-group-line icon-sm me-1_5"></i>Account</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="AccountSettingsSecurity"><i
+              class="icon-base ri ri-lock-line icon-sm me-1_5"></i>Security</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="AccountSettingsBilling"><i
+                class="icon-base ri ri-bookmark-line icon-sm me-1_5"></i>Billing & Plans</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="AccountSettingsNotifications"><i
+                  class="icon-base ri ri-notification-4-line icon-sm me-1_5"></i>Notifications</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="AccountSettingsConnections"><i
+                    class="icon-base ri ri-link-m icon-sm me-1_5"></i>Connections</a>
+                  </li>
+                </ul>
+              </div>
+              @* <div class="card mb-6">
       <!-- Account -->
       <div class="card-body">
         <div class="d-flex align-items-start align-items-sm-center gap-6">
@@ -178,18 +183,19 @@
         </form>
       </div>
       <!-- /Account -->
-    </div>
-    <div class="card">
-      <h5 class="card-header">Delete Account</h5>
-      <div class="card-body">
-        <form id="formAccountDeactivation" onsubmit="return false">
-          <div class="form-check mb-6 ms-3">
-            <input class="form-check-input" type="checkbox" name="accountActivation" id="accountActivation" />
-            <label class="form-check-label" for="accountActivation">I confirm my account deactivation</label>
-          </div>
-          <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Deactivate Account</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+    </div> *@
+              <div class="card">
+                <h5 class="card-header">Delete Account</h5>
+                <div class="card-body">
+                  <form id="formAccountDeactivation" onsubmit="return false">
+                    <div class="form-check mb-6 ms-3">
+                      <input class="form-check-input" type="checkbox" name="accountActivation" id="accountActivation" />
+                      <label class="form-check-label" for="accountActivation">I confirm my account deactivation</label>
+                    </div>
+                    <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Deactivate
+                      Account</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
