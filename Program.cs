@@ -41,6 +41,7 @@ builder.Services.AddSingleton(
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<GoogleFormService>();
 builder.Services.AddScoped<CreditService>();
+builder.Services.AddScoped<AccountDeletionService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

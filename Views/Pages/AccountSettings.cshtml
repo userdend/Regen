@@ -21,7 +21,7 @@
 }
 
 @section PageScripts {
-  <script src="~/js/pages-account-settings-account.js"></script>
+  <script src="~/js/pages-account-settings-account.js" asp-append-version="true"></script>
 }
 
 @* ************** Content ************** *@
@@ -187,12 +187,14 @@
               <div class="card">
                 <h5 class="card-header">Delete Account</h5>
                 <div class="card-body">
-                  <form id="formAccountDeactivation" onsubmit="return false">
+                  <form asp-controller="Pages" asp-action="DeleteAccount" method="post" id="formAccountDeactivation"
+                        onsubmit="return false">
+                    @Html.AntiForgeryToken()
                     <div class="form-check mb-6 ms-3">
                       <input class="form-check-input" type="checkbox" name="accountActivation" id="accountActivation" />
-                      <label class="form-check-label" for="accountActivation">I confirm my account deactivation</label>
+                      <label class="form-check-label" for="accountActivation">I confirm my account deletion</label>
                     </div>
-                    <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Deactivate
+                    <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Delete
                       Account</button>
                     </form>
                   </div>
