@@ -55,17 +55,27 @@
 
 
   <ul class="navbar-nav flex-row align-items-center ms-md-auto">
+    <!-- Credits -->
+    <li class="nav-item d-flex align-items-center me-2 me-xl-3">
+      <div class="d-flex align-items-center border rounded-pill ps-3 pe-1 py-1 gap-2">
 
-    <!-- Search -->
-    @* @if (Convert.ToBoolean(TempData.Peek("menuHorizontal")).ToString() == "True")
-    {
-      <li class="nav-item navbar-search-wrapper me-sm-2 me-xl-1 mb-50">
-        <a class="nav-item nav-link search-toggler px-0" href="javascript:void(0);">
-          <span class="d-inline-block text-body-secondary fw-normal" id="autocomplete"></span>
+        <!-- Balance -->
+        <a asp-controller="" asp-action="" class="d-flex align-items-center gap-1 text-body text-decoration-none"
+           title="View Credits">
+          <span id="credit-balance" class="fw-semibold">30</span>
+          <i class="icon-base ri ri-coin-line icon-20px text-primary"></i>
         </a>
-      </li>
-    } *@
-    <!-- /Search -->
+
+        <!-- Top Up -->
+        <a asp-controller="" asp-action=""
+           class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center p-0"
+           style="width: 26px; height: 26px;" title="Top Up Credits" aria-label="Top Up Credits">
+          <i class="icon-base ri ri-add-line"></i>
+        </a>
+      </div>
+    </li>
+    <!-- /Credits -->
+
     <!-- Language -->
     <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
       <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -82,11 +92,6 @@
             <span>French</span>
           </a>
         </li>
-        @* <li>
-          <a class="dropdown-item" href="javascript:void(0);" data-language="ar" data-text-direction="rtl">
-            <span>Arabic</span>
-          </a>
-        </li> *@
         <li>
           <a class="dropdown-item" href="javascript:void(0);" data-language="de" data-text-direction="ltr">
             <span>German</span>
