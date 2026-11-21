@@ -9,8 +9,17 @@ using Regen.Models.Enums;
 using OpenAI.Responses;
 using System.Security.Cryptography;
 using System.Text;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var stripeSecretKey = builder.Configuration["Stripe:SecretKey"]
+    ?? throw new InvalidOperationException("Stripe secret key missing.");
+
+var stripeWebhookSecret = builder.Configuration["Stripe:WebhookSecret"]
+    ?? throw new InvalidOperationException("Stripe webhook secret missing.");
+
+StripeConfiguration.ApiKey = stripeSecretKey;
 
 // Connect to the database
 builder.Services.AddDbContext<RegenContext>(options =>
@@ -42,6 +51,7 @@ builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<GoogleFormService>();
 builder.Services.AddScoped<CreditService>();
 builder.Services.AddScoped<AccountDeletionService>();
+builder.Services.AddScoped<PaymentService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

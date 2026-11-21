@@ -22,6 +22,158 @@ namespace Regen.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Regen.Models.CreditPackage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Credits")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("StripePriceId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("StripePriceId")
+                        .IsUnique();
+
+                    b.ToTable("CreditPackages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 3.00m,
+                            CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Credits = 30,
+                            Currency = "MYR",
+                            IsActive = true,
+                            Name = "Starter",
+                            StripePriceId = "price_1UeFhQHaga1NVVh0rM4EpQGi",
+                            UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 10.00m,
+                            CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Credits = 100,
+                            Currency = "MYR",
+                            IsActive = true,
+                            Name = "Basic",
+                            StripePriceId = "price_1UeFizHaga1NVVh0OhHp23fW",
+                            UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 45.00m,
+                            CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Credits = 500,
+                            Currency = "MYR",
+                            IsActive = true,
+                            Name = "Pro",
+                            StripePriceId = "price_1UeFjZHaga1NVVh0uiihyUB4",
+                            UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Amount = 80.00m,
+                            CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Credits = 1000,
+                            Currency = "MYR",
+                            IsActive = true,
+                            Name = "Premium",
+                            StripePriceId = "price_1UeFk3Haga1NVVh0T0bCVxQC",
+                            UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
+            modelBuilder.Entity("Regen.Models.CreditPurchase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Amount")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreditPackageId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Credits")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeSessionId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreditPackageId");
+
+                    b.HasIndex("StripeSessionId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CreditPurchases");
+                });
+
             modelBuilder.Entity("Regen.Models.CreditTransaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -195,6 +347,23 @@ namespace Regen.Migrations
                     b.ToTable("ScheduledEntries");
                 });
 
+            modelBuilder.Entity("Regen.Models.StripeWebhookEvent", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StripeWebhookEvents");
+                });
+
             modelBuilder.Entity("Regen.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -249,6 +418,25 @@ namespace Regen.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Regen.Models.CreditPurchase", b =>
+                {
+                    b.HasOne("Regen.Models.CreditPackage", "CreditPackage")
+                        .WithMany()
+                        .HasForeignKey("CreditPackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Regen.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreditPackage");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Regen.Models.CreditTransaction", b =>

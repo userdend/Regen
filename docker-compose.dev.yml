@@ -13,6 +13,8 @@ services:
       Admin__GoogleId: ${ADMIN_GOOGLE_ID}
       OpenAI__ApiKey: ${OPENAI_APIKEY}
       Security__CreditClaimKey: ${CREDIT_CLAIM_KEY}
+      Stripe__SecretKey: ${STRIPE_SECRET_KEY}
+      Stripe__WebhookSecret: ${WEBHOOK_SECRET_KEY}
       PATH: /root/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
       - .:/Regen

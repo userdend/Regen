@@ -46,6 +46,16 @@
 </template>
 
 <div class="row gy-6">
+  <form asp-controller="Billing" asp-action="CreateCheckoutSession" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="packageId" value="1" />
+
+    <button type="submit" class="btn btn-primary">
+      Buy 30 Credits
+    </button>
+  </form>
   <!-- Congratulations card -->
   @* <div class="col-md-12 col-lg-4">
     <div class="card">

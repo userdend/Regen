@@ -16,6 +16,9 @@ public class RegenContext : DbContext
     public DbSet<SavedConfiguration> SavedConfigurations { get; set; }
     public DbSet<CreditTransaction> CreditTransactions => Set<CreditTransaction>();
     public DbSet<FreeCreditClaim> FreeCreditClaims => Set<FreeCreditClaim>();
+    public DbSet<CreditPurchase> CreditPurchases => Set<CreditPurchase>();
+    public DbSet<CreditPackage> CreditPackages => Set<CreditPackage>();
+    public DbSet<StripeWebhookEvent> StripeWebhookEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -101,6 +104,107 @@ public class RegenContext : DbContext
 
             entity.HasIndex(e => e.GoogleIdHash)
                 .IsUnique();
+        });
+
+        modelBuilder.Entity<CreditPurchase>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasIndex(x => x.StripeSessionId)
+                .IsUnique();
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId);
+        });
+
+        modelBuilder.Entity<CreditPackage>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Credits)
+                .IsRequired();
+
+            entity.Property(x => x.Amount)
+                .HasPrecision(10, 2)
+                .IsRequired();
+
+            entity.Property(x => x.Currency)
+                .HasMaxLength(3)
+                .IsRequired();
+
+            entity.Property(x => x.StripePriceId)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            entity.Property(x => x.IsActive)
+                .HasDefaultValue(true);
+
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+
+            entity.Property(x => x.UpdatedAt)
+                .IsRequired();
+
+            entity.HasIndex(x => x.StripePriceId)
+                .IsUnique();
+
+            entity.HasIndex(x => x.IsActive);
+
+            entity.HasData(
+                new CreditPackage
+                {
+                    Id = 1,
+                    Name = "Starter",
+                    Credits = 30,
+                    Amount = 3.00m,
+                    Currency = "MYR",
+                    StripePriceId = "price_1UeFhQHaga1NVVh0rM4EpQGi",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new CreditPackage
+                {
+                    Id = 2,
+                    Name = "Basic",
+                    Credits = 100,
+                    Amount = 10.00m,
+                    Currency = "MYR",
+                    StripePriceId = "price_1UeFizHaga1NVVh0OhHp23fW",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new CreditPackage
+                {
+                    Id = 3,
+                    Name = "Pro",
+                    Credits = 500,
+                    Amount = 45.00m,
+                    Currency = "MYR",
+                    StripePriceId = "price_1UeFjZHaga1NVVh0uiihyUB4",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc)
+                },
+                new CreditPackage
+                {
+                    Id = 4,
+                    Name = "Premium",
+                    Credits = 1000,
+                    Amount = 80.00m,
+                    Currency = "MYR",
+                    StripePriceId = "price_1UeFk3Haga1NVVh0T0bCVxQC",
+                    IsActive = true,
+                    CreatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 11, 21, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
         });
     }
 }
