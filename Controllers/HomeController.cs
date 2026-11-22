@@ -41,6 +41,17 @@ public class HomeController(RegenContext db) : Controller
         return View();
     }
 
+    [AllowAnonymous]
+    public async Task<IActionResult> Pricing()
+    {
+        var packages = await db.CreditPackages
+            .Where(p => p.IsActive)
+            .OrderBy(p => p.Amount)
+            .ToListAsync();
+
+        return View(packages);
+    }
+
     public IActionResult Privacy()
     {
         return View();

@@ -62,7 +62,9 @@
         <!-- Balance -->
         <a asp-controller="" asp-action="" class="d-flex align-items-center gap-1 text-body text-decoration-none"
            title="View Credits">
-          <span id="credit-balance" class="fw-semibold">30</span>
+          <span id="credit-balance" class="fw-semibold">
+            @await Component.InvokeAsync("CreditBalance")
+          </span>
           <i class="icon-base ri ri-coin-line icon-20px text-primary"></i>
         </a>
 

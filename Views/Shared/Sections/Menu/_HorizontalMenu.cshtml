@@ -93,6 +93,13 @@
         </a>
       </li>
 
+      <li class='menu-item@(currentPage == "/Home/Pricing" ? " active" : "")'>
+        <a asp-controller="Home" asp-action="Pricing" class="menu-link">
+          <i class="menu-icon icon-base ri ri-money-dollar-circle-line"></i>
+          <div data-i18n="Pricing">Pricing</div>
+        </a>
+      </li>
+
       <!-- Layouts -->
       <li class='menu-item@(currentPage.StartsWith("/LayoutExamples") ? " active" : "")'>
         <a href="javascript:void(0)" class="menu-link menu-toggle">
