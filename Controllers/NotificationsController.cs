@@ -32,7 +32,7 @@ public class NotificationsController(
             .AsNoTracking()
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
-            .Take(20)
+            .Take(5)
             .Select(n => new
             {
                 n.Id,
