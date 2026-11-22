@@ -48,10 +48,13 @@ public class CreditRefundWorker(
         var db = scope.ServiceProvider
             .GetRequiredService<RegenContext>();
 
+        var notificationService = scope.ServiceProvider
+            .GetRequiredService<NotificationService>();
+
         var creditService = scope.ServiceProvider
             .GetRequiredService<CreditService>();
 
-        var batchIds = await db.ScheduledBatches
+        var batches = await db.ScheduledBatches
             .AsNoTracking()
             .Where(b => b.Entries.Any(e =>
                 e.Status == "failed" &&
@@ -60,23 +63,35 @@ public class CreditRefundWorker(
                 e.Status == "pending" ||
                 e.Status == "processing" ||
                 e.Status == "retrying"))
-            .Select(b => b.Id)
+            .Select(b => new
+            {
+                b.Id,
+                b.UserId
+            })
             .Take(100)
             .ToListAsync(ct);
 
-        foreach (var batchId in batchIds)
+        foreach (var batch in batches)
         {
             try
             {
                 var refunded = await creditService
-                    .RefundFailedEntriesAsync(batchId, ct);
+                    .RefundFailedEntriesAsync(batch.Id, ct);
 
                 if (refunded > 0)
                 {
                     logger.LogInformation(
-                        "Refunded {Count} credits for batch {BatchId}",
+                        "Refunded {Count} credits for batch {batchId}",
                         refunded,
-                        batchId);
+                        batch.Id);
+
+                    await notificationService.CreateAsync(
+                        batch.UserId,
+                        "Credits refunded",
+                        $"{refunded} credits have been refunded to your account.",
+                        "success",
+                        "/Dashboards/Index"
+                    );
                 }
             }
             catch (OperationCanceledException)
@@ -89,7 +104,7 @@ public class CreditRefundWorker(
                 logger.LogError(
                     ex,
                     "Failed to refund batch {BatchId}",
-                    batchId);
+                    batch.Id);
             }
         }
     }

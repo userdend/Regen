@@ -19,6 +19,7 @@ public class RegenContext : DbContext
     public DbSet<CreditPurchase> CreditPurchases => Set<CreditPurchase>();
     public DbSet<CreditPackage> CreditPackages => Set<CreditPackage>();
     public DbSet<StripeWebhookEvent> StripeWebhookEvents { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -206,5 +207,14 @@ public class RegenContext : DbContext
                 }
             );
         });
+
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.User)
+            .WithMany()
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Notification>()
+            .HasIndex(n => new { n.UserId, n.IsRead, n.CreatedAt });
     }
 }

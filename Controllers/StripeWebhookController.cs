@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using Regen.Data;
+using Regen.Services;
 
 namespace Regen.Controllers;
 
@@ -11,7 +12,8 @@ namespace Regen.Controllers;
 public class StripeWebhookController(
     RegenContext _db,
     IConfiguration _config,
-    ILogger<StripeWebhookController> _logger) : ControllerBase
+    ILogger<StripeWebhookController> _logger,
+    NotificationService _notificationService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Handle()
@@ -172,6 +174,14 @@ public class StripeWebhookController(
                         throw new InvalidOperationException(
                             "Purchase user not found."
                         );
+
+                    await _notificationService.CreateAsync(
+                        purchase.UserId,
+                        "Payment successful",
+                        $"{purchase.Credits} credits have been added to your account.",
+                        "success",
+                        "/Home/Index"
+                    );
 
                     _logger.LogInformation(
                         "Purchase {PurchaseId} completed. Added {Credits} credits.",

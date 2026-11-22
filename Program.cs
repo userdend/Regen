@@ -47,6 +47,7 @@ builder.Services.AddSingleton(
     new ResponsesClient(apiKey)
 );
 
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<GoogleFormService>();
 builder.Services.AddScoped<CreditService>();

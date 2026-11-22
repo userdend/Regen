@@ -22,13 +22,22 @@
 }
 
 
-@section VendorStyles{ @RenderSection("VendorStyles", required: false)}
+@section VendorStyles {
+  @RenderSection("VendorStyles", required: false)
+}
 
-@section PageStyles{ @RenderSection("PageStyles", required: false)}
+@section PageStyles {
+  @RenderSection("PageStyles", required: false)
+}
 
-@section VendorScripts{ @RenderSection("VendorScripts", required: false)}
+@section VendorScripts {
+  @RenderSection("VendorScripts", required: false)
+}
 
-@section PageScripts{ @RenderSection("PageScripts", required: false)}
+@section PageScripts {
+  @RenderSection("PageScripts", required: false)
+  <script src="~/custom/js/notifications.js" asp-append-version="true"></script>
+}
 
 <div class='layout-wrapper layout-navbar-full layout-horizontal layout-without-menu'>
   <div class='layout-container'>
@@ -51,7 +60,8 @@
           @await Html.PartialAsync("Sections/Menu/_HorizontalMenu")
         }
         <!-- Content -->
-        <div class='@ViewData["container"] @((Convert.ToBoolean(@ViewData["isFlex"])) ? "d-flex align-items-stretch flex-grow-1 p-0" : "flex-grow-1 container-p-y")'>
+        <div
+          class='@ViewData["container"] @((Convert.ToBoolean(@ViewData["isFlex"])) ? "d-flex align-items-stretch flex-grow-1 p-0" : "flex-grow-1 container-p-y")'>
           @RenderBody()
         </div>
         <!-- / Content -->

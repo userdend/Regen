@@ -186,16 +186,19 @@
 
                             <!-- Purchase Button -->
                             <div class="mt-auto">
+                                <form asp-controller="Billing" asp-action="CreateCheckoutSession" method="post">
+                                    @Html.AntiForgeryToken()
 
-                                <button type="button"
-                                        class="btn @(isPopular ? "btn-primary" : "btn-outline-primary") w-100 py-3"
-                                        onclick="purchasePackage(@package.Id)">
+                                    <input type="hidden" name="packageId" value="@package.Id" />
 
-                                    Get @package.Name
+                                    <button type="submit"
+                                            class="btn @(isPopular ? "btn-primary" : "btn-outline-primary") w-100 py-3">
 
-                                    <i class="ri ri-arrow-right-line ms-1"></i>
-                                </button>
+                                        Get @package.Name
 
+                                        <i class="ri ri-arrow-right-line ms-1"></i>
+                                    </button>
+                                </form>
                             </div>
 
                         </div>

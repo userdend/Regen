@@ -109,7 +109,7 @@ public class GoogleFormController(
             );
         }
 
-        // Prototype restriction: only accept Google Forms URLs.
+        // Validate Google Forms URLs
         foreach (var url in request.Entries)
         {
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
@@ -123,57 +123,103 @@ public class GoogleFormController(
             }
         }
 
+        // Get authenticated user
         var userIdClaim = User.FindFirstValue("RegenUserId");
 
         if (!Guid.TryParse(userIdClaim, out var userId))
-        { return Unauthorized(); }
+            return Unauthorized();
 
-        var now = DateTime.UtcNow;
-        var batch = new ScheduledBatch
-        {
-            UserId = userId,
-            IntervalMilliseconds = request.IntervalMilliseconds,
-            CreatedAt = now
-        };
+        var creditCost = request.Entries.Count;
 
-        for (int i = 0; i < request.Entries.Count; i++)
+        // Start database transaction
+        await using var transaction =
+            await db.Database.BeginTransactionAsync(ct);
+
+        try
         {
-            batch.Entries.Add(new ScheduledEntry
+            // Atomic credit deduction
+            var affectedRows = await db.Users
+                .Where(u => u.Id == userId && u.Credit >= creditCost)
+                .ExecuteUpdateAsync(
+                    setters => setters.SetProperty(
+                        u => u.Credit,
+                        u => u.Credit - creditCost
+                    ),
+                    ct
+                );
+
+            // Deduction failed
+            if (affectedRows == 0)
             {
-                Sequence = i + 1,
-                Url = request.Entries[i],
+                var userExists = await db.Users
+                    .AnyAsync(u => u.Id == userId, ct);
 
-                ScheduledAt = now.AddMilliseconds(
-                    (long)i * request.IntervalMilliseconds
-                )
-            });
-        }
+                if (!userExists)
+                    return Unauthorized();
 
-        db.ScheduledBatches.Add(batch);
+                return BadRequest("Insufficient credits.");
+            }
 
-        if (request.SaveConfiguration)
-        {
-            var savedConfig = new SavedConfiguration
+            // Create scheduled batch
+            var now = DateTime.UtcNow;
+
+            var batch = new ScheduledBatch
             {
                 UserId = userId,
-                Name = $"Configuration {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}",
-                Url = request.DataMap.Url,
-                Config = request.DataMap.Config,
-                IntervalMilliseconds = request.IntervalMilliseconds
+                IntervalMilliseconds = request.IntervalMilliseconds,
+                CreatedAt = now
             };
 
-            db.SavedConfigurations.Add(savedConfig);
+            for (int i = 0; i < request.Entries.Count; i++)
+            {
+                batch.Entries.Add(new ScheduledEntry
+                {
+                    Sequence = i + 1,
+                    Url = request.Entries[i],
+
+                    ScheduledAt = now.AddMilliseconds(
+                        (long)i * request.IntervalMilliseconds
+                    )
+                });
+            }
+
+            db.ScheduledBatches.Add(batch);
+
+            // Save configuration if requested
+            if (request.SaveConfiguration)
+            {
+                var savedConfig = new SavedConfiguration
+                {
+                    UserId = userId,
+                    Name = $"Configuration {now:yyyy-MM-dd HH:mm:ss}",
+                    Url = request.DataMap.Url,
+                    Config = request.DataMap.Config,
+                    IntervalMilliseconds = request.IntervalMilliseconds
+                };
+
+                db.SavedConfigurations.Add(savedConfig);
+            }
+
+            // Persist batch and configuration
+            await db.SaveChangesAsync(ct);
+
+            // Commit credit deduction + batch + configuration
+            await transaction.CommitAsync(ct);
+
+            return Accepted(new
+            {
+                batch.Id,
+                Count = batch.Entries.Count,
+                batch.IntervalMilliseconds,
+                FirstScheduledAt = now
+            });
         }
-
-        await db.SaveChangesAsync(ct);
-
-        return Accepted(new
+        catch
         {
-            batch.Id,
-            Count = batch.Entries.Count,
-            batch.IntervalMilliseconds,
-            FirstScheduledAt = now
-        });
+            // Rollback all database changes
+            await transaction.RollbackAsync(ct);
+            throw;
+        }
     }
 
     [HttpPost]
