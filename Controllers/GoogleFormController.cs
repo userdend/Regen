@@ -101,8 +101,7 @@ public class GoogleFormController(
             );
         }
 
-        if (request.Entries.Count == 0 ||
-            request.Entries.Count > 1000)
+        if (request.Entries.Count == 0)
         {
             return BadRequest(
                 "Entries must contain between 1 and 1000 URLs."
