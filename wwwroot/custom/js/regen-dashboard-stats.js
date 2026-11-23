@@ -1,97 +1,3 @@
-const chartEl = document.querySelector('#hourlyOverviewChart');
-
-let hourlyChart = null;
-
-let borderColor, chartBgColor;
-
-if (isDarkStyle) {
-  chartBgColor = '#474360';
-} else {
-  chartBgColor = '#F0F2F8';
-}
-
-borderColor = config.colors.borderColor;
-
-const hourlyOverviewChartConfig = {
-  chart: {
-    type: 'bar',
-    height: 265,
-    animations: {
-      enabled: false
-    },
-    redrawOnWindowResize: true,
-    redrawOnParentResize: true,
-    toolbar: {
-      show: false
-    }
-  },
-  series: [
-    {
-      name: 'Completed',
-      data: []
-    }
-  ],
-  colors: [config.colors.primary],
-  plotOptions: {
-    bar: {
-      horizontal: false,
-      columnWidth: '50%',
-      borderRadius: 2,
-      borderRadiusApplication: 'end',
-      distributed: false,
-      dataLabels: {
-        position: 'top'
-      }
-    }
-  },
-  dataLabels: {
-    enabled: false
-  },
-  legend: {
-    show: false
-  },
-  grid: {
-    strokeDashArray: 8,
-    borderColor,
-    padding: {
-      bottom: 10
-    }
-  },
-  xaxis: {
-    type: 'datetime',
-    labels: {
-      datetimeUTC: false,
-      format: 'HH:mm',
-      rotate: 0,
-      hideOverlappingLabels: true,
-      style: {
-        fontSize: '11px'
-      }
-    }
-  },
-  yaxis: {
-    min: 0,
-    forceNiceScale: true,
-    labels: {
-      formatter: function (val) {
-        return Math.round(val).toString();
-      }
-    }
-  },
-  states: {
-    hover: {
-      filter: {
-        type: 'none'
-      }
-    },
-    active: {
-      filter: {
-        type: 'none'
-      }
-    }
-  }
-};
-
 async function loadDashboardStats() {
   try {
     const response = await fetch(window.appUrls.getDashboardStats);
@@ -111,27 +17,6 @@ async function loadDashboardStats() {
     document.getElementById('totalRetrying').textContent = data.pending.retrying.toLocaleString();
     document.getElementById('totalFailed').textContent = data.failed.count.toLocaleString();
     document.getElementById('failedPercentage').textContent = `${data.failed.percentage}%`;
-
-    if (hourlyChart) {
-      const now = Date.now();
-      const sixHoursAgo = now - 6 * 60 * 60 * 1000;
-
-      await hourlyChart.updateOptions({
-        xaxis: {
-          type: 'datetime',
-          min: sixHoursAgo,
-          max: now
-        },
-        series: [
-          {
-            name: 'Completed',
-            data: data.hourlyOverview.data
-          }
-        ]
-      });
-    }
-
-    document.getElementById('hourlyTotal').textContent = data.hourlyOverview.totalCompleted.toLocaleString();
   } catch (error) {
     console.error('Dashboard stats error:', error);
   }
@@ -184,6 +69,8 @@ async function loadFailedBatches() {
       retryBatch(batch.id);
     });
 
+    row.classList.add('text-nowrap');
+
     tbody.appendChild(row);
   });
 }
@@ -210,7 +97,11 @@ async function retryBatch(batchId) {
       title: 'Success!',
       text: data.message,
       timer: 1500,
-      showConfirmButton: false
+      customClass: {
+        confirmButton: 'btn btn-primary me-2 waves-effect waves-light',
+        cancelButton: 'btn btn-outline-secondary waves-effect'
+      },
+      buttonsStyling: false
     });
 
     await loadFailedBatches();
@@ -226,13 +117,6 @@ async function retryBatch(batchId) {
 }
 
 async function initializeDashboard() {
-  if (chartEl) {
-    hourlyChart = new ApexCharts(chartEl, hourlyOverviewChartConfig);
-
-    await hourlyChart.render();
-  }
-
-  // Start polling after chart initialization
   pollDashboardStats();
   loadFailedBatches();
 }
