@@ -195,7 +195,7 @@
                                                         <tbody>
                                                             @foreach (var config in Model)
                                                             {
-                                                                <tr>
+                                                                <tr class="text-nowrap">
                                                                     <td>@config.Name</td>
                                                                     <td>@(config.IntervalMilliseconds / 1000.0) seconds</td>
                                                                     <td>@config.CreatedAt.ToString("dd MMM yyyy, HH:mm")</td>
