@@ -28,6 +28,7 @@ services:
     command: dotnet watch run --non-interactive --no-launch-profile
     depends_on:
       - db
+      - seq
 
   db:
     image: postgres:17
@@ -53,6 +54,17 @@ services:
     depends_on:
       - db
 
+  seq:
+    image: datalust/seq:latest
+    container_name: regen-seq
+    environment:
+      ACCEPT_EULA: Y
+    ports:
+      - '5341:80'
+    volumes:
+      - seq-data:/data
+    restart: unless-stopped
+
 volumes:
   regen-nuget:
   regen-bin:
@@ -60,3 +72,4 @@ volumes:
   regen-dotnet-home:
   regen-postgres-data:
   regen-data:
+  seq-data:

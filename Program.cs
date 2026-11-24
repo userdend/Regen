@@ -29,7 +29,8 @@ builder.Host.UseSerilog((context, services, configuration) =>
             fileSizeLimitBytes: 10 * 1024 * 1024,
             rollOnFileSizeLimit: true,
             shared: true
-        );
+        )
+        .WriteTo.Seq("http://seq:80");
 });
 
 var configuration = builder.Configuration;
