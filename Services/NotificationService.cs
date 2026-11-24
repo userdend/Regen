@@ -31,9 +31,10 @@ public class NotificationService(
         await _db.SaveChangesAsync();
 
         _logger.LogInformation(
-            "Notification created for user {UserId}: {Title}",
+            "Notification {NotificationId} created for user {UserId} with type {NotificationType}.",
+            notification.Id,
             userId,
-            title
+            type
         );
     }
 }
