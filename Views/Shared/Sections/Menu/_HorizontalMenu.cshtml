@@ -58,6 +58,13 @@
         </a>
       </li>
 
+      <li class='menu-item@(currentPage == "/AdminDashboards" ? " active" : "")'>
+        <a asp-controller="AdminDashboards" asp-action="Index" class="menu-link">
+          <i class="menu-icon icon-base ri ri-home-smile-line"></i>
+          <div data-i18n="Admin Dashboard">Admin Dashboard</div>
+        </a>
+      </li>
+
       <li class='menu-item@(currentPage == "/Home/Generator" ? " active" : "")'>
         <a asp-controller="Home" asp-action="Generator" class="menu-link">
           <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 48 48">

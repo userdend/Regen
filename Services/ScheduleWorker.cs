@@ -6,6 +6,7 @@ namespace Regen.Services;
 
 public class ScheduleWorker(
     IServiceScopeFactory scopeFactory,
+     IHttpClientFactory httpClientFactory,
     ILogger<ScheduleWorker> logger
 ) : BackgroundService
 {
@@ -136,19 +137,22 @@ public class ScheduleWorker(
     }
 
     private async Task ProcessEntry(
-    RegenContext db,
-    ScheduledEntry entry,
-    CancellationToken ct)
+        RegenContext db,
+        ScheduledEntry entry,
+        CancellationToken ct
+    )
     {
         const int maxRetries = 3;
         const int baseDelaySeconds = 30;
 
+        var client = httpClientFactory.CreateClient("Scheduler");
+
         try
         {
-            // Prototype: simulate an HTTP 500 response.
-            await Task.Delay(500, ct);
+            using var response = await client.GetAsync(entry.Url, ct);
 
-            var statusCode = 500;
+            var statusCode = (int)response.StatusCode;
+            var processedAt = DateTime.UtcNow;
 
             if (statusCode == 500 && entry.RetryCount < maxRetries)
             {
@@ -169,12 +173,14 @@ public class ScheduleWorker(
                         .SetProperty(e => e.RetryCount, retryNumber)
                         .SetProperty(e => e.NextRetryAt, nextRetryAt)
                         .SetProperty(e => e.LastHttpStatusCode, statusCode)
+                        .SetProperty(e => e.ProcessedAt, processedAt)
                         .SetProperty(e => e.LastError, "HTTP 500"),
                         ct);
 
                 logger.LogWarning(
-                    "Entry {EntryId} returned HTTP 500. Retry {Retry}/3 at {NextRetry}",
+                    "Entry {EntryId} returned HTTP {StatusCode}. Retry {Retry}/3 at {NextRetry}",
                     entry.Id,
+                    statusCode,
                     retryNumber,
                     nextRetryAt
                 );
@@ -196,6 +202,12 @@ public class ScheduleWorker(
                         .SetProperty(e => e.LastHttpStatusCode, statusCode),
                         ct);
 
+                logger.LogInformation(
+                    "Entry {EntryId} completed with HTTP {StatusCode}",
+                    entry.Id,
+                    statusCode
+                );
+
                 return;
             }
 
@@ -206,6 +218,7 @@ public class ScheduleWorker(
                     e.Status == "processing")
                 .ExecuteUpdateAsync(s => s
                     .SetProperty(e => e.Status, "failed")
+                     .SetProperty(e => e.ProcessedAt, processedAt)
                     .SetProperty(e => e.NextRetryAt, (DateTime?)null)
                     .SetProperty(e => e.LastHttpStatusCode, statusCode)
                     .SetProperty(e => e.LastError, $"HTTP {statusCode}"),

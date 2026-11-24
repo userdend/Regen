@@ -33,6 +33,12 @@ builder.Services.AddHttpClient("NoRedirect", c =>
         AutomaticDecompression = System.Net.DecompressionMethods.All
     });
 
+builder.Services.AddHttpClient("Scheduler", client =>
+{
+client.Timeout = TimeSpan.FromSeconds(10);
+client.MaxResponseContentBufferSize = 50 * 1024 * 1024;
+});
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Register services
