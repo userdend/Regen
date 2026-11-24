@@ -19,7 +19,22 @@ public class CreditRefundWorker(
         );
 
         // Check immediately on startup.
-        await CheckRefunds(stoppingToken);
+        try
+        {
+            await CheckRefunds(stoppingToken);
+        }
+        catch (OperationCanceledException)
+            when (stoppingToken.IsCancellationRequested)
+        {
+            return;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(
+                ex,
+                "Initial credit refund scan failed; continuing with scheduled scans."
+            );
+        }
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {
@@ -73,26 +88,12 @@ public class CreditRefundWorker(
 
         foreach (var batch in batches)
         {
+            int refunded;
+
             try
             {
-                var refunded = await creditService
+                refunded = await creditService
                     .RefundFailedEntriesAsync(batch.Id, ct);
-
-                if (refunded > 0)
-                {
-                    logger.LogInformation(
-                        "Refunded {Count} credits for batch {batchId}",
-                        refunded,
-                        batch.Id);
-
-                    await notificationService.CreateAsync(
-                        batch.UserId,
-                        "Credits refunded",
-                        $"{refunded} credits have been refunded to your account.",
-                        "success",
-                        "/Dashboards/Index"
-                    );
-                }
             }
             catch (OperationCanceledException)
                 when (ct.IsCancellationRequested)
@@ -103,8 +104,41 @@ public class CreditRefundWorker(
             {
                 logger.LogError(
                     ex,
-                    "Failed to refund batch {BatchId}",
-                    batch.Id);
+                    "Failed to refund batch {BatchId} for user {UserId}.",
+                    batch.Id,
+                    batch.UserId
+                );
+                continue;
+            }
+
+            if (refunded <= 0)
+                continue;
+
+            logger.LogInformation(
+                "Refunded {RefundedCredits} credits for batch {BatchId} belonging to user {UserId}.",
+                refunded,
+                batch.Id,
+                batch.UserId
+            );
+
+            try
+            {
+                await notificationService.CreateAsync(
+                    batch.UserId,
+                    "Credits refunded",
+                    $"{refunded} credits have been refunded to your account.",
+                    "success",
+                    "/Dashboards/Index"
+                );
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    ex,
+                    "Refund completed for batch {BatchId}, but notification creation failed for user {UserId}.",
+                    batch.Id,
+                    batch.UserId
+                );
             }
         }
     }
