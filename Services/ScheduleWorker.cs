@@ -13,7 +13,12 @@ public class ScheduleWorker(
     protected override async Task ExecuteAsync(
         CancellationToken stoppingToken)
     {
-        logger.LogInformation("Schedule worker started.");
+        const int pollingIntervalSeconds = 1;
+
+        logger.LogInformation(
+            "Schedule worker started with a {PollingIntervalSeconds}-second polling interval.",
+            pollingIntervalSeconds
+        );
 
         // Recover unfinished prototype tasks after restart.
         using (var scope = scopeFactory.CreateScope())
@@ -21,16 +26,21 @@ public class ScheduleWorker(
             var db = scope.ServiceProvider
                 .GetRequiredService<RegenContext>();
 
-            await db.ScheduledEntries
+            var recoveredEntries = await db.ScheduledEntries
                 .Where(e => e.Status == "processing")
                 .ExecuteUpdateAsync(
                     s => s.SetProperty(
                         e => e.Status, "pending"),
                     stoppingToken);
+
+            logger.LogInformation(
+                "Recovered {RecoveredEntries} entries left processing during a previous run.",
+                recoveredEntries
+            );
         }
 
         using var timer = new PeriodicTimer(
-            TimeSpan.FromSeconds(1)
+            TimeSpan.FromSeconds(pollingIntervalSeconds)
         );
 
         while (!stoppingToken.IsCancellationRequested)
@@ -101,14 +111,13 @@ public class ScheduleWorker(
         try
         {
             logger.LogInformation(
-                "Processing entry {Sequence} from batch {BatchId}",
+                "Processing entry {EntryId} at sequence {Sequence} from batch {BatchId}.",
+                entry.Id,
                 entry.Sequence,
                 entry.BatchId
             );
 
             await ProcessEntry(db, entry, ct);
-
-            logger.LogInformation("Entry processing attempt finished.");
         }
         catch (OperationCanceledException)
             when (ct.IsCancellationRequested)
@@ -120,8 +129,9 @@ public class ScheduleWorker(
         {
             logger.LogError(
                 ex,
-                "Entry {EntryId} failed.",
-                entry.Id
+                "Entry {EntryId} in batch {BatchId} failed during processing.",
+                entry.Id,
+                entry.BatchId
             );
 
             await db.ScheduledEntries
@@ -178,10 +188,11 @@ public class ScheduleWorker(
                         ct);
 
                 logger.LogWarning(
-                    "Entry {EntryId} returned HTTP {StatusCode}. Retry {Retry}/3 at {NextRetry}",
+                    "Entry {EntryId} returned HTTP {StatusCode}; scheduling retry {RetryNumber} of {MaxRetries} at {NextRetry}.",
                     entry.Id,
                     statusCode,
                     retryNumber,
+                    maxRetries,
                     nextRetryAt
                 );
 
@@ -203,7 +214,7 @@ public class ScheduleWorker(
                         ct);
 
                 logger.LogInformation(
-                    "Entry {EntryId} completed with HTTP {StatusCode}",
+                    "Entry {EntryId} completed with HTTP {StatusCode}.",
                     entry.Id,
                     statusCode
                 );
@@ -224,10 +235,11 @@ public class ScheduleWorker(
                     .SetProperty(e => e.LastError, $"HTTP {statusCode}"),
                     ct);
 
-            logger.LogError(
-                "Entry {EntryId} permanently failed with HTTP {StatusCode}",
+            logger.LogWarning(
+                "Entry {EntryId} permanently failed with HTTP {StatusCode} after {RetryCount} retries.",
                 entry.Id,
-                statusCode
+                statusCode,
+                entry.RetryCount
             );
         }
         catch (OperationCanceledException)
