@@ -28,9 +28,9 @@ public class GoogleFormController(
         ? value.GetString()
         : null;
 
-        if (string.IsNullOrEmpty(url))
+        if (string.IsNullOrWhiteSpace(url))
         {
-            logger.LogWarning("Incoming request send empty URL.");
+            logger.LogWarning("Google Form content request was rejected because the URL was missing.");
             return BadRequest(new { error = "Target URL is required in the headers." });
         }
 
@@ -42,9 +42,18 @@ public class GoogleFormController(
 
             return Content(json, "application/json");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new InvalidOperationException($"URL {url} cannot be processed.");
+            logger.LogError(
+                ex,
+                "Failed to retrieve or parse Google Form content from host {Host}.",
+                GetUrlHost(url)
+            );
+
+            throw new InvalidOperationException(
+                $"URL for host {GetUrlHost(url)} cannot be processed.",
+                ex
+            );
         }
     }
 
@@ -55,9 +64,9 @@ public class GoogleFormController(
         ? value.GetString()
         : null;
 
-        if (string.IsNullOrEmpty(url))
+        if (string.IsNullOrWhiteSpace(url))
         {
-            logger.LogWarning("Incoming request send empty URL.");
+            logger.LogWarning("Original Google Form URL request was rejected because the URL was missing.");
             return BadRequest(new { error = "Target URL is required in the headers." });
         }
 
@@ -82,9 +91,18 @@ public class GoogleFormController(
 
             return Content(originalUrl ?? string.Empty, "text/html; charset=utf-8");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error retrieving the original URL for {url}.");
+            logger.LogError(
+                ex,
+                "Failed to retrieve the original Google Form URL from host {Host}.",
+                GetUrlHost(url)
+            );
+
+            throw new InvalidOperationException(
+                $"Error retrieving the original URL for host {GetUrlHost(url)}.",
+                ex
+            );
         }
     }
 
@@ -96,6 +114,11 @@ public class GoogleFormController(
         if (request.IntervalMilliseconds < 1000 ||
             request.IntervalMilliseconds > 600000)
         {
+            logger.LogWarning(
+                "Schedule request was rejected because interval {IntervalMilliseconds} was outside the allowed range.",
+                request.IntervalMilliseconds
+            );
+
             return BadRequest(
                 "Interval must be between 1 second and 10 minutes."
             );
@@ -103,14 +126,18 @@ public class GoogleFormController(
 
         if (request.Entries.Count == 0)
         {
+            logger.LogWarning("Schedule request was rejected because it contained no entries.");
+
             return BadRequest(
                 "Entries must contain between 1 and 1000 URLs."
             );
         }
 
         // Validate Google Forms URLs
-        foreach (var url in request.Entries)
+        for (int i = 0; i < request.Entries.Count; i++)
         {
+            var url = request.Entries[i];
+
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
                 uri.Scheme != Uri.UriSchemeHttps ||
                 !uri.Host.Equals(
@@ -118,6 +145,11 @@ public class GoogleFormController(
                     StringComparison.OrdinalIgnoreCase) ||
                 !uri.AbsolutePath.Contains("/forms/"))
             {
+                logger.LogWarning(
+                    "Schedule request was rejected because entry {EntryNumber} was not a valid Google Forms URL.",
+                    i + 1
+                );
+
                 return BadRequest("Invalid Google Forms URL.");
             }
         }
@@ -126,7 +158,10 @@ public class GoogleFormController(
         var userIdClaim = User.FindFirstValue("RegenUserId");
 
         if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            logger.LogWarning("Schedule request was rejected because the authenticated user ID claim was invalid.");
             return Unauthorized();
+        }
 
         var creditCost = request.Entries.Count;
 
@@ -154,8 +189,19 @@ public class GoogleFormController(
                     .AnyAsync(u => u.Id == userId, ct);
 
                 if (!userExists)
+                {
+                    logger.LogWarning(
+                        "Schedule request was rejected because user {UserId} no longer exists.",
+                        userId
+                    );
                     return Unauthorized();
+                }
 
+                logger.LogInformation(
+                    "Schedule request was rejected for user {UserId} because it required {CreditCost} credits.",
+                    userId,
+                    creditCost
+                );
                 return BadRequest("Insufficient credits.");
             }
 
@@ -205,6 +251,14 @@ public class GoogleFormController(
             // Commit credit deduction + batch + configuration
             await transaction.CommitAsync(ct);
 
+            logger.LogInformation(
+                "Created scheduled batch {BatchId} for user {UserId} with {EntryCount} entries and interval {IntervalMilliseconds}.",
+                batch.Id,
+                userId,
+                batch.Entries.Count,
+                batch.IntervalMilliseconds
+            );
+
             return Accepted(new
             {
                 batch.Id,
@@ -213,10 +267,16 @@ public class GoogleFormController(
                 FirstScheduledAt = now
             });
         }
-        catch
+        catch (Exception ex)
         {
             // Rollback all database changes
             await transaction.RollbackAsync(ct);
+            logger.LogError(
+                ex,
+                "Failed to create scheduled batch for user {UserId} with {EntryCount} entries.",
+                userId,
+                request.Entries.Count
+            );
             throw;
         }
     }
@@ -271,6 +331,7 @@ public class GoogleFormController(
         catch (OperationCanceledException)
             when (cancellationToken.IsCancellationRequested)
         {
+            logger.LogInformation("Synthetic response generation was cancelled by the client.");
             return new StatusCodeResult(499);
         }
         catch (ClientResultException ex)
@@ -307,4 +368,9 @@ public class GoogleFormController(
             });
         }
     }
+
+    private static string GetUrlHost(string url) =>
+        Uri.TryCreate(url, UriKind.Absolute, out var uri)
+            ? uri.Host
+            : "invalid-url";
 }
