@@ -1,73 +1,77 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using OpenAI.Responses;
+using Regen.Models.Enums;
 using Regen.Data;
 using Regen.Models;
 using Regen.Services;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Regen.Models.Enums;
-using OpenAI.Responses;
 using System.Security.Cryptography;
 using System.Text;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var stripeSecretKey = builder.Configuration["Stripe:SecretKey"]
+var configuration = builder.Configuration;
+var services = builder.Services;
+
+// Configuration and external clients
+var stripeSecretKey = configuration["Stripe:SecretKey"]
     ?? throw new InvalidOperationException("Stripe secret key missing.");
 
-var stripeWebhookSecret = builder.Configuration["Stripe:WebhookSecret"]
+_ = configuration["Stripe:WebhookSecret"]
     ?? throw new InvalidOperationException("Stripe webhook secret missing.");
 
 StripeConfiguration.ApiKey = stripeSecretKey;
 
-// Connect to the database
-builder.Services.AddDbContext<RegenContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("RegenContext") ?? throw new InvalidOperationException("Connection string 'RegenContext' not found.")));
+var connectionString = configuration.GetConnectionString("RegenContext")
+    ?? throw new InvalidOperationException(
+        "Connection string 'RegenContext' not found.");
 
-builder.Services.AddHttpClient("NoRedirect", c =>
-        c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0"))
+services.AddDbContext<RegenContext>(options =>
+    options.UseNpgsql(connectionString));
+
+services.AddHttpClient("NoRedirect", client =>
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0"))
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
         AllowAutoRedirect = false,
         AutomaticDecompression = System.Net.DecompressionMethods.All
     });
 
-builder.Services.AddHttpClient("Scheduler", client =>
+services.AddHttpClient("Scheduler", client =>
 {
-client.Timeout = TimeSpan.FromSeconds(10);
-client.MaxResponseContentBufferSize = 50 * 1024 * 1024;
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.MaxResponseContentBufferSize = 50 * 1024 * 1024;
 });
 
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-// Register services
+// Application services
 #pragma warning disable OPENAI001
 
-var apiKey = builder.Configuration["OpenAI:ApiKey"]
+var openAiApiKey = configuration["OpenAI:ApiKey"]
     ?? throw new InvalidOperationException(
         "OpenAI API key is missing."
     );
 
-builder.Services.AddSingleton(
-    new ResponsesClient(apiKey)
-);
+services.AddSingleton(new ResponsesClient(openAiApiKey));
 
-builder.Services.AddScoped<NotificationService>();
-builder.Services.AddScoped<OpenAIService>();
-builder.Services.AddScoped<GoogleFormService>();
-builder.Services.AddScoped<CreditService>();
-builder.Services.AddScoped<AccountDeletionService>();
-builder.Services.AddScoped<PaymentService>();
+services.AddScoped<NotificationService>();
+services.AddScoped<OpenAIService>();
+services.AddScoped<GoogleFormService>();
+services.AddScoped<CreditService>();
+services.AddScoped<AccountDeletionService>();
+services.AddScoped<PaymentService>();
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+services.AddControllersWithViews();
 
-// Register the background service
-builder.Services.AddHostedService<ScheduleWorker>();
-builder.Services.AddHostedService<CreditRefundWorker>();
+services.AddHostedService<ScheduleWorker>();
+services.AddHostedService<CreditRefundWorker>();
 
-builder.Services
+// Authentication
+services
     .AddAuthentication(options =>
     {
         options.DefaultScheme =
@@ -75,13 +79,14 @@ builder.Services
     })
     .AddGoogle(options =>
     {
-        options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
-        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.ClientId = configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = configuration["Authentication:Google:ClientSecret"]!;
         options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.ClaimActions.MapJsonKey("picture", "picture");
         options.Events.OnCreatingTicket = async context =>
         {
-            var db = context.HttpContext.RequestServices.GetRequiredService<RegenContext>();
+            var db = context.HttpContext.RequestServices
+                .GetRequiredService<RegenContext>();
             var googleId = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
             var email = context.Principal?.FindFirstValue(ClaimTypes.Email);
             var name = context.Principal?.FindFirstValue(ClaimTypes.Name);
@@ -95,7 +100,7 @@ builder.Services
 
             // Generate a stable, keyed identifier.
             var key = Convert.FromBase64String(
-                builder.Configuration["Security:CreditClaimKey"]
+                configuration["Security:CreditClaimKey"]
                 ?? throw new InvalidOperationException(
                     "Credit claim key is missing."));
 
@@ -106,7 +111,8 @@ builder.Services
                 )
             );
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
+            var user = await db.Users
+                .FirstOrDefaultAsync(u => u.GoogleId == googleId);
             var now = DateTime.UtcNow;
 
             if (user == null)
@@ -167,7 +173,7 @@ builder.Services
                 await db.SaveChangesAsync();
             }
 
-            var adminGoogleId = builder.Configuration["Admin:GoogleId"];
+            var adminGoogleId = configuration["Admin:GoogleId"];
 
             if (!string.IsNullOrWhiteSpace(adminGoogleId) &&
                 googleId == adminGoogleId &&
@@ -201,11 +207,10 @@ builder.Services
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -216,8 +221,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// MVC routes
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dashboards}/{action=Index}/{id?}"); // <-- Update in AspnetCoreMvcStarter
+    pattern: "{controller=Dashboards}/{action=Index}/{id?}");
 
 app.Run();
