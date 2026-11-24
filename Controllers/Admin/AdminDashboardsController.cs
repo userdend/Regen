@@ -101,6 +101,14 @@ public class AdminDashboardsController(RegenContext db, ILogger<AdminDashboardsC
             HttpStatusChart = httpStatusChart
         };
 
+        logger.LogDebug(
+            "Admin dashboard metrics loaded: {TotalUsers} users, {TotalBatches} batches, {FailedEntries} failed entries, and {HttpStatusGroups} HTTP status groups.",
+            model.TotalUsers,
+            model.TotalBatches,
+            model.FailedEntries,
+            model.HttpStatusChart.Count
+        );
+
         return View(model);
     }
 }
