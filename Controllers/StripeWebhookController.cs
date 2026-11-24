@@ -37,9 +37,9 @@ public class StripeWebhookController(
         }
         catch (StripeException ex)
         {
-            _logger.LogError(
+            _logger.LogWarning(
                 ex,
-                "Stripe webhook validation failed."
+                "Stripe webhook validation failed; returning BadRequest."
             );
 
             return BadRequest("Invalid webhook.");
@@ -60,22 +60,46 @@ public class StripeWebhookController(
         };
 
         if (!supportedEvents.Contains(stripeEvent.Type))
+        {
+            _logger.LogInformation(
+                "Ignoring unsupported Stripe event {EventType} with ID {EventId}.",
+                stripeEvent.Type,
+                stripeEvent.Id
+            );
             return Ok();
+        }
 
         var session = stripeEvent.Data.Object as Session;
 
         if (session == null)
+        {
+            _logger.LogWarning(
+                "Stripe event {EventId} of type {EventType} did not contain a Checkout Session.",
+                stripeEvent.Id,
+                stripeEvent.Type
+            );
             return BadRequest("Invalid Checkout Session.");
+        }
 
         if (session.Metadata == null ||
             !session.Metadata.TryGetValue(
                 "purchase_id", out var purchaseIdString))
         {
+            _logger.LogWarning(
+                "Stripe event {EventId} is missing the purchase_id metadata.",
+                stripeEvent.Id
+            );
             return BadRequest("Missing purchase_id.");
         }
 
         if (!Guid.TryParse(purchaseIdString, out var purchaseId))
+        {
+            _logger.LogWarning(
+                "Stripe event {EventId} contained an invalid purchase_id.",
+                stripeEvent.Id
+            );
             return BadRequest("Invalid purchase_id.");
+        }
 
         try
         {
@@ -125,6 +149,13 @@ public class StripeWebhookController(
                 // Wait for confirmed payment
                 if (session.PaymentStatus != "paid")
                 {
+                    _logger.LogInformation(
+                        "Stripe event {EventId} for purchase {PurchaseId} is awaiting payment confirmation; status is {PaymentStatus}.",
+                        stripeEvent.Id,
+                        purchaseId,
+                        session.PaymentStatus
+                    );
+
                     await transaction.CommitAsync();
                     return Ok();
                 }
@@ -192,8 +223,9 @@ public class StripeWebhookController(
                 else
                 {
                     _logger.LogInformation(
-                        "Purchase {PurchaseId} already processed. No credits added.",
-                        purchaseId
+                        "Purchase {PurchaseId} was not pending when Stripe event {EventId} was processed; no credits added.",
+                        purchaseId,
+                        stripeEvent.Id
                     );
                 }
             }
@@ -202,7 +234,7 @@ public class StripeWebhookController(
             else if (stripeEvent.Type ==
                      "checkout.session.async_payment_failed")
             {
-                await _db.CreditPurchases
+                var updated = await _db.CreditPurchases
                     .Where(x =>
                         x.Id == purchaseId &&
                         x.Status == "Pending")
@@ -211,8 +243,11 @@ public class StripeWebhookController(
                     );
 
                 _logger.LogInformation(
-                    "Purchase {PurchaseId} marked as Failed.",
-                    purchaseId
+                    updated > 0
+                        ? "Purchase {PurchaseId} marked as Failed from Stripe event {EventId}."
+                        : "Purchase {PurchaseId} was already finalized; no Failed status update was applied.",
+                    purchaseId,
+                    stripeEvent.Id
                 );
             }
 
@@ -220,7 +255,7 @@ public class StripeWebhookController(
             else if (stripeEvent.Type ==
                      "checkout.session.expired")
             {
-                await _db.CreditPurchases
+                var updated = await _db.CreditPurchases
                     .Where(x =>
                         x.Id == purchaseId &&
                         x.Status == "Pending")
@@ -229,8 +264,11 @@ public class StripeWebhookController(
                     );
 
                 _logger.LogInformation(
-                    "Purchase {PurchaseId} marked as Expired.",
-                    purchaseId
+                    updated > 0
+                        ? "Purchase {PurchaseId} marked as Expired from Stripe event {EventId}."
+                        : "Purchase {PurchaseId} was already finalized; no Expired status update was applied.",
+                    purchaseId,
+                    stripeEvent.Id
                 );
             }
 
@@ -243,8 +281,10 @@ public class StripeWebhookController(
         {
             _logger.LogError(
                 ex,
-                "Failed to process Stripe event {EventId}.",
-                stripeEvent.Id
+                "Failed to process Stripe event {EventId} of type {EventType} for purchase {PurchaseId}.",
+                stripeEvent.Id,
+                stripeEvent.Type,
+                purchaseId
             );
 
             // Transaction is rolled back when disposed.
