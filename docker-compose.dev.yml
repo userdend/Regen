@@ -24,6 +24,7 @@ services:
       - regen-obj:/Regen/obj
       - regen-dotnet-home:/root/.dotnet
       - regen-data:/Regen/data
+      - ./logs:/Regen/logs
     command: dotnet watch run --non-interactive --no-launch-profile
     depends_on:
       - db

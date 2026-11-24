@@ -6,12 +6,31 @@ using Regen.Models.Enums;
 using Regen.Data;
 using Regen.Models;
 using Regen.Services;
+using Serilog;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .Enrich.WithProperty("Application", "Regen")
+        .WriteTo.Console()
+        .WriteTo.File(
+            path: "logs/regen-.log",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 14,
+            fileSizeLimitBytes: 10 * 1024 * 1024,
+            rollOnFileSizeLimit: true,
+            shared: true
+        );
+});
 
 var configuration = builder.Configuration;
 var services = builder.Services;
@@ -215,10 +234,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSerilogRequestLogging();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 // MVC routes
