@@ -208,12 +208,20 @@ Procfile          text
 # Ignore files (like .npmignore or .gitignore)
 *.*ignore         text
 
-# Exclude third-party frontend assets from language statistics
-wwwroot/assets/** linguist-vendored
+# ==========================================
+# GitHub Linguist Configuration
+# ==========================================
 
-# Exclude generated files
+# Third-party frontend dependencies
+wwwroot/lib/** linguist-vendored
+wwwroot/vendors/** linguist-vendored
+node_modules/** linguist-vendored
+
+# Generated / compiled files
 bin/** linguist-generated
 obj/** linguist-generated
+wwwroot/build/** linguist-generated
+wwwroot/dist/** linguist-generated
 
-# Exclude dependencies
-node_modules/** linguist-vendored
+# Third-party template assets
+wwwroot/assets/** linguist-vendored
