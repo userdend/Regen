@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace Regen.Controllers.Admin;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class AdminDashboardsController(RegenContext db, ILogger<AdminDashboardsController> logger) : Controller
 {
     public async Task<IActionResult> Index()

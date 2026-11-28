@@ -51,19 +51,25 @@
         </ul>
       </li> *@
 
-      <li class='menu-item@(currentPage == "/" ? " active" : "")'>
-        <a asp-controller="Dashboards" asp-action="Index" class="menu-link">
-          <i class="menu-icon icon-base ri ri-home-smile-line"></i>
-          <div data-i18n="Dashboard">Dashboard</div>
-        </a>
-      </li>
+      @if (User.IsInRole("User"))
+      {
+        <li class='menu-item@(currentPage == "/" ? " active" : "")'>
+          <a asp-controller="Dashboards" asp-action="Index" class="menu-link">
+            <i class="menu-icon icon-base ri ri-home-smile-line"></i>
+            <div data-i18n="Dashboard">Dashboard</div>
+          </a>
+        </li>
+      }
 
-      <li class='menu-item@(currentPage == "/AdminDashboards" ? " active" : "")'>
-        <a asp-controller="AdminDashboards" asp-action="Index" class="menu-link">
-          <i class="menu-icon icon-base ri ri-home-smile-line"></i>
-          <div data-i18n="Admin Dashboard">Admin Dashboard</div>
-        </a>
-      </li>
+      @if (User.IsInRole("Admin"))
+      {
+        <li class='menu-item@(currentPage == "/AdminDashboards" ? " active" : "")'>
+          <a asp-controller="AdminDashboards" asp-action="Index" class="menu-link">
+            <i class="menu-icon icon-base ri ri-home-smile-line"></i>
+            <div data-i18n="Admin Dashboard">Admin Dashboard</div>
+          </a>
+        </li>
+      }
 
       <li class='menu-item@(currentPage == "/Home/Generator" ? " active" : "")'>
         <a asp-controller="Home" asp-action="Generator" class="menu-link">
@@ -93,17 +99,17 @@
         </a>
       </li>
 
-      <li class='menu-item@(currentPage == "/Pages/FAQ" ? " active" : "")'>
-        <a asp-controller="Pages" asp-action="FAQ" class="menu-link">
-          <i class="menu-icon icon-base ri ri-question-line"></i>
-          <div data-i18n="Help Center">Help Center</div>
-        </a>
-      </li>
-
       <li class='menu-item@(currentPage == "/Home/Pricing" ? " active" : "")'>
         <a asp-controller="Home" asp-action="Pricing" class="menu-link">
           <i class="menu-icon icon-base ri ri-money-dollar-circle-line"></i>
           <div data-i18n="Pricing">Pricing</div>
+        </a>
+      </li>
+
+      <li class='menu-item@(currentPage == "/Pages/FAQ" ? " active" : "")'>
+        <a asp-controller="Pages" asp-action="FAQ" class="menu-link">
+          <i class="menu-icon icon-base ri ri-question-line"></i>
+          <div data-i18n="Help Center">Help Center</div>
         </a>
       </li>
 

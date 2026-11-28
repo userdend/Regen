@@ -2,7 +2,7 @@
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Cards Statistics - UI elements";
+    ViewData["Title"] = "Dashboard - Analytics";
 }
 
 @section VendorStyles {
@@ -23,7 +23,7 @@
     <script>
         window.appUrls = {
             httpStatusChart: @Html.Raw(JsonSerializer.Serialize(Model.HttpStatusChart))
-                                        };
+                                            };
     </script>
     <script src="~/js/cards-statistics.js"></script>
     <script src="~/custom/js/regen-admin-dashboard-stats.js" asp-append-version="true"></script>

@@ -6,7 +6,7 @@ using Regen.Services;
 
 namespace Regen.Controllers;
 
-[Authorize]
+[Authorize(Roles = "User")]
 public class DashboardsController(RegenContext db, CreditService creditService) : Controller
 {
   public IActionResult Index() => View();
