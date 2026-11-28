@@ -5,6 +5,7 @@ using Regen.Models.Enums;
 namespace Regen.Services;
 
 public class CreditRefundWorker(
+    WorkerHealthTracker tracker,
     IServiceScopeFactory scopeFactory,
     ILogger<CreditRefundWorker> logger
 ) : BackgroundService
@@ -22,6 +23,7 @@ public class CreditRefundWorker(
         try
         {
             await CheckRefunds(stoppingToken);
+            tracker.ReportHeartbeat(nameof(CreditRefundWorker));
         }
         catch (OperationCanceledException)
             when (stoppingToken.IsCancellationRequested)

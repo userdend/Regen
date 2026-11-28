@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Responses;
 using Regen.Models.Enums;
@@ -76,6 +77,17 @@ var openAiApiKey = configuration["OpenAI:ApiKey"]
         "OpenAI API key is missing."
     );
 
+services
+    .AddHealthChecks()
+    .AddCheck<WorkerHealthCheck>(
+        "workers",
+        tags: ["ready", "workers"])
+    .AddNpgSql(
+        connectionString,
+        name: "postgresql",
+        tags: ["ready", "database"]);
+
+services.AddSingleton<WorkerHealthTracker>();
 services.AddSingleton(new ResponsesClient(openAiApiKey));
 
 services.AddScoped<NotificationService>();
@@ -239,6 +251,26 @@ app.UseSerilogRequestLogging();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
+
+app.MapHealthChecks("/health/database", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("database")
+});
+
+app.MapHealthChecks("/health/workers", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("workers")
+});
 
 // MVC routes
 app.MapControllerRoute(

@@ -5,8 +5,9 @@ using Regen.Models;
 namespace Regen.Services;
 
 public class ScheduleWorker(
+    WorkerHealthTracker tracker,
     IServiceScopeFactory scopeFactory,
-     IHttpClientFactory httpClientFactory,
+    IHttpClientFactory httpClientFactory,
     ILogger<ScheduleWorker> logger
 ) : BackgroundService
 {
@@ -48,6 +49,7 @@ public class ScheduleWorker(
             try
             {
                 await ProcessDueEntries(stoppingToken);
+                tracker.ReportHeartbeat(nameof(ScheduleWorker));
             }
             catch (OperationCanceledException)
                 when (stoppingToken.IsCancellationRequested)
