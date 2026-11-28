@@ -49,7 +49,6 @@ public class ScheduleWorker(
             try
             {
                 await ProcessDueEntries(stoppingToken);
-                tracker.ReportHeartbeat(nameof(ScheduleWorker));
             }
             catch (OperationCanceledException)
                 when (stoppingToken.IsCancellationRequested)
@@ -62,6 +61,11 @@ public class ScheduleWorker(
                     ex,
                     "Schedule worker encountered an error."
                 );
+            }
+
+            finally
+            {
+                tracker.ReportHeartbeat(nameof(ScheduleWorker));
             }
 
             if (!await timer.WaitForNextTickAsync(stoppingToken))

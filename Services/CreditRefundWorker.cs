@@ -23,7 +23,6 @@ public class CreditRefundWorker(
         try
         {
             await CheckRefunds(stoppingToken);
-            tracker.ReportHeartbeat(nameof(CreditRefundWorker));
         }
         catch (OperationCanceledException)
             when (stoppingToken.IsCancellationRequested)
@@ -36,6 +35,10 @@ public class CreditRefundWorker(
                 ex,
                 "Initial credit refund scan failed; continuing with scheduled scans."
             );
+        }
+        finally
+        {
+            tracker.ReportHeartbeat(nameof(CreditRefundWorker));
         }
 
         while (await timer.WaitForNextTickAsync(stoppingToken))
