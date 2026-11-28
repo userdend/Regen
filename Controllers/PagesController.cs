@@ -35,7 +35,7 @@ public class PagesController(AccountDeletionService accountDeletionService) : Co
   // public IActionResult AccountSettingsConnections() => View();
   // public IActionResult AccountSettingsNotifications() => View();
   // public IActionResult AccountSettingsSecurity() => View();
-  // public IActionResult FAQ() => View();
+  public IActionResult FAQ() => View();
   // public IActionResult MiscComingSoon() => View();
   // public IActionResult MiscError() => View();
   // public IActionResult MiscNotAuthorized() => View();
