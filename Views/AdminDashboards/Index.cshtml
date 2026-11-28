@@ -23,7 +23,7 @@
     <script>
         window.appUrls = {
             httpStatusChart: @Html.Raw(JsonSerializer.Serialize(Model.HttpStatusChart))
-                            };
+                                        };
     </script>
     <script src="~/js/cards-statistics.js"></script>
     <script src="~/custom/js/regen-admin-dashboard-stats.js" asp-append-version="true"></script>
@@ -32,7 +32,7 @@
 @* ************** Content ************** *@
 <div class="row g-6">
     <!-- Cards with few info -->
-    <div class="col-lg-3 col-sm-6">
+    @* <div class="col-lg-3 col-sm-6">
         <div class="card transparent-card bg-transparent shadow-none border-1">
             <div class="card-body">
                 <div class="d-flex align-items-center flex-wrap gap-2">
@@ -115,7 +115,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> *@
     <!--/ Cards with few info -->
 
     <!-- Cards with separator -->
@@ -302,7 +302,7 @@
                     <!--/ Total Profit Chart & Last month balance -->
 
                     <!-- Transactions -->
-                    <div class="col-xl-8">
+                    @* <div class="col-xl-8">
                         <div class="card">
                             <div class="card-header">
                                 <div class="d-flex align-items-center justify-content-between">
@@ -378,11 +378,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Transactions -->
 
                     <!-- Total Sales -->
-                    <div class="col-xl-4 col-lg-6">
+                    @* <div class="col-xl-4 col-lg-6">
                         <div class="card h-100">
                             <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
                                 <div class="me-3">
@@ -396,11 +396,11 @@
                                 <div id="totalSalesDonutChart" class="mt-3 mt-md-0"></div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Total Sales -->
 
                     <!-- Cards with icon profit and loss info -->
-                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <div class="avatar">
@@ -579,11 +579,11 @@
                                 <small>Daily Transactions</small>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Cards with icon profit and loss info -->
 
                     <!-- Ratings -->
-                    <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
+                    @* <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
                         <div class="card">
                             <div class="row">
                                 <div class="col-6">
@@ -607,11 +607,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Ratings -->
 
                     <!-- Sessions -->
-                    <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
+                    @* <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
                         <div class="card">
                             <div class="row">
                                 <div class="col-6">
@@ -635,11 +635,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Sessions -->
 
                     <!-- Customers -->
-                    <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
+                    @* <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
                         <div class="card">
                             <div class="row">
                                 <div class="col-6">
@@ -663,11 +663,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Customers -->
 
                     <!-- Total Orders -->
-                    <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
+                    @* <div class="col-xl-3 col-lg-6 col-sm-6 mt-10">
                         <div class="card">
                             <div class="row">
                                 <div class="col-6">
@@ -691,11 +691,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Total Orders -->
 
                     <!-- Total Revenue chart -->
-                    <div class="col-xl-2 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-md-4 col-sm-6">
                         <div class="card">
                             <div class="card-header pb-0">
                                 <h4 class="mb-0">$35.4k</h4>
@@ -705,11 +705,11 @@
                                 <h6 class="text-center mb-0">Total Revenue</h6>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Total Revenue chart -->
 
                     <!-- Sessions group chart -->
-                    <div class="col-xl-2 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-md-4 col-sm-6">
                         <div class="card">
                             <div class="card-header pb-0">
                                 <h4 class="mb-0">4,350</h4>
@@ -719,11 +719,11 @@
                                 <h6 class="text-center mb-0">Sessions</h6>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Sessions group chart -->
 
                     <!-- Total Growth chart -->
-                    <div class="col-xl-2 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-md-4 col-sm-6">
                         <div class="card">
                             <div class="card-header pb-0">
                                 <h4 class="mb-0">42.5k</h4>
@@ -733,11 +733,11 @@
                                 <h6 class="text-center mb-0">Total Growth</h6>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Total Growth chart -->
 
                     <!-- Total Sales chart -->
-                    <div class="col-xl-2 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-md-4 col-sm-6">
                         <div class="card h-100">
                             <div class="card-header pb-0">
                                 <h4 class="mb-0">135k</h4>
@@ -747,11 +747,11 @@
                                 <h6 class="text-center mb-0">Total Sales</h6>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Total Sales chart -->
 
                     <!-- Sessions chart -->
-                    <div class="col-xl-2 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-md-4 col-sm-6">
                         <div class="card">
                             <div class="card-header pb-0">
                                 <h4 class="mb-0">2,856</h4>
@@ -761,11 +761,11 @@
                                 <h6 class="text-center mb-0">Sessions</h6>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Sessions chart -->
 
                     <!-- Total Profit line chart -->
-                    <div class="col-xl-2 col-md-4 col-sm-6">
+                    @* <div class="col-xl-2 col-md-4 col-sm-6">
                         <div class="card">
                             <div class="card-header pb-0">
                                 <h4 class="mb-0">$86.4k</h4>
@@ -775,6 +775,6 @@
                                 <h6 class="text-center mb-0">Total Profit</h6>
                             </div>
                         </div>
-                    </div>
+                    </div> *@
                     <!--/ Total Profit line chart -->
                 </div>

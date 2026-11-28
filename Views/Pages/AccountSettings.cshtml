@@ -33,7 +33,7 @@
           <a class="nav-link active" href="javascript:void(0);"><i
             class="icon-base ri ri-group-line icon-sm me-1_5"></i>Account</a>
           </li>
-          <li class="nav-item">
+          @* <li class="nav-item">
             <a class="nav-link" href="AccountSettingsSecurity"><i
               class="icon-base ri ri-lock-line icon-sm me-1_5"></i>Security</a>
             </li>
@@ -48,10 +48,10 @@
                 <li class="nav-item">
                   <a class="nav-link" href="AccountSettingsConnections"><i
                     class="icon-base ri ri-link-m icon-sm me-1_5"></i>Connections</a>
-                  </li>
-                </ul>
-              </div>
-              @* <div class="card mb-6">
+                  </li> *@
+        </ul>
+      </div>
+      @* <div class="card mb-6">
       <!-- Account -->
       <div class="card-body">
         <div class="d-flex align-items-start align-items-sm-center gap-6">
@@ -184,20 +184,20 @@
       </div>
       <!-- /Account -->
     </div> *@
-              <div class="card">
-                <h5 class="card-header">Delete Account</h5>
-                <div class="card-body">
-                  <form asp-controller="Pages" asp-action="DeleteAccount" method="post" id="formAccountDeactivation"
-                        onsubmit="return false">
-                    @Html.AntiForgeryToken()
-                    <div class="form-check mb-6 ms-3">
-                      <input class="form-check-input" type="checkbox" name="accountActivation" id="accountActivation" />
-                      <label class="form-check-label" for="accountActivation">I confirm my account deletion</label>
-                    </div>
-                    <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Delete
-                      Account</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
+      <div class="card">
+        <h5 class="card-header">Delete Account</h5>
+        <div class="card-body">
+          <form asp-controller="Pages" asp-action="DeleteAccount" method="post" id="formAccountDeactivation"
+                onsubmit="return false">
+            @Html.AntiForgeryToken()
+            <div class="form-check mb-6 ms-3">
+              <input class="form-check-input" type="checkbox" name="accountActivation" id="accountActivation" />
+              <label class="form-check-label" for="accountActivation">I confirm my account deletion</label>
             </div>
+            <button type="submit" class="btn btn-danger deactivate-account" disabled="disabled">Delete
+              Account</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
