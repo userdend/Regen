@@ -6,7 +6,7 @@ namespace Regen.Controllers;
 
 public class WizardsController : Controller
 {
-  public IActionResult Checkout() => View();
-  public IActionResult CreateDeal() => View();
-  public IActionResult PropertyListing() => View();
+  // public IActionResult Checkout() => View();
+  // public IActionResult CreateDeal() => View();
+  // public IActionResult PropertyListing() => View();
 }

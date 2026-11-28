@@ -31,19 +31,19 @@ public class PagesController(AccountDeletionService accountDeletionService) : Co
 
     return RedirectToAction("Login", "Auth");
   }
-  public IActionResult AccountSettingsBilling() => View();
-  public IActionResult AccountSettingsConnections() => View();
-  public IActionResult AccountSettingsNotifications() => View();
-  public IActionResult AccountSettingsSecurity() => View();
-  public IActionResult FAQ() => View();
-  public IActionResult MiscComingSoon() => View();
-  public IActionResult MiscError() => View();
-  public IActionResult MiscNotAuthorized() => View();
-  public IActionResult MiscUnderMaintenance() => View();
-  public IActionResult MiscServerError() => View();
-  public IActionResult Pricing() => View();
-  public IActionResult ProfileConnections() => View();
-  public IActionResult ProfileUser() => View();
-  public IActionResult ProfileTeams() => View();
-  public IActionResult ProfileProjects() => View();
+  // public IActionResult AccountSettingsBilling() => View();
+  // public IActionResult AccountSettingsConnections() => View();
+  // public IActionResult AccountSettingsNotifications() => View();
+  // public IActionResult AccountSettingsSecurity() => View();
+  // public IActionResult FAQ() => View();
+  // public IActionResult MiscComingSoon() => View();
+  // public IActionResult MiscError() => View();
+  // public IActionResult MiscNotAuthorized() => View();
+  // public IActionResult MiscUnderMaintenance() => View();
+  // public IActionResult MiscServerError() => View();
+  // public IActionResult Pricing() => View();
+  // public IActionResult ProfileConnections() => View();
+  // public IActionResult ProfileUser() => View();
+  // public IActionResult ProfileTeams() => View();
+  // public IActionResult ProfileProjects() => View();
 }

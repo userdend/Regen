@@ -10,7 +10,7 @@ namespace Regen.Controllers;
 public class DashboardsController(RegenContext db, CreditService creditService) : Controller
 {
   public IActionResult Index() => View();
-  public IActionResult CRM() => View();
+  // public IActionResult CRM() => View();
 
   [HttpGet]
   public async Task<IActionResult> GetStats()

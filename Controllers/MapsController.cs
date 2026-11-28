@@ -6,5 +6,5 @@ namespace Regen.Controllers;
 
 public class MapsController : Controller
 {
-  public IActionResult Leaflet() => View();
+  // public IActionResult Leaflet() => View();
 }

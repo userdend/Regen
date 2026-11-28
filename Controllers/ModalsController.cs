@@ -6,5 +6,5 @@ namespace Regen.Controllers;
 
 public class ModalsController : Controller
 {
-  public IActionResult Examples() => View();
+  // public IActionResult Examples() => View();
 }

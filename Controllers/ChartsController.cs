@@ -6,6 +6,6 @@ namespace Regen.Controllers;
 
 public class ChartsController : Controller
 {
-  public IActionResult Apex() => View();
-  public IActionResult Chartjs() => View();
+  // public IActionResult Apex() => View();
+  // public IActionResult Chartjs() => View();
 }

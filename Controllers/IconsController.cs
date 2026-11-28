@@ -6,5 +6,5 @@ namespace Regen.Controllers;
 
 public class IconsController : Controller
 {
-  public IActionResult RiIcons() => View();
+  // public IActionResult RiIcons() => View();
 }

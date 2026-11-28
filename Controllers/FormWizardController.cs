@@ -6,6 +6,6 @@ namespace Regen.Controllers;
 
 public class FormWizardController : Controller
 {
-public IActionResult Icons() => View();
-public IActionResult Numbered() => View();
+    // public IActionResult Icons() => View();
+    // public IActionResult Numbered() => View();
 }

@@ -6,7 +6,7 @@ namespace Regen.Controllers;
 
 public class AcademyController : Controller
 {
-  public IActionResult Dashboard() => View();
-  public IActionResult MyCourse() => View();
-  public IActionResult CourseDetails() => View();
+  // public IActionResult Dashboard() => View();
+  // public IActionResult MyCourse() => View();
+  // public IActionResult CourseDetails() => View();
 }

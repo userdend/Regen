@@ -6,6 +6,6 @@ namespace Regen.Controllers;
 
 public class AccessController : Controller
 {
-public IActionResult Permission() => View();
-public IActionResult Roles() => View();
+    // public IActionResult Permission() => View();
+    // public IActionResult Roles() => View();
 }

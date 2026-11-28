@@ -6,8 +6,8 @@ namespace Regen.Controllers;
 
 public class TablesController : Controller
 {
-  public IActionResult Basic() => View();
-  public IActionResult DatatablesAdvanced() => View();
-  public IActionResult DatatablesBasic() => View();
-  public IActionResult DatatablesExtensions() => View();
+  // public IActionResult Basic() => View();
+  // public IActionResult DatatablesAdvanced() => View();
+  // public IActionResult DatatablesBasic() => View();
+  // public IActionResult DatatablesExtensions() => View();
 }

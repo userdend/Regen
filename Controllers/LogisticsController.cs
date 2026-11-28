@@ -6,6 +6,6 @@ namespace Regen.Controllers;
 
 public class LogisticsController : Controller
 {
-  public IActionResult Dashboard() => View();
-  public IActionResult Fleet() => View();
+  // public IActionResult Dashboard() => View();
+  // public IActionResult Fleet() => View();
 }
